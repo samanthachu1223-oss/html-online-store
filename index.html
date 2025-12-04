@@ -1,28 +1,11 @@
-// Function to place the order and go to checkout page
-function placeOrder() {
-    const selectedItems = drinkList.filter(item => item.quantity > 0);
-
-    if (selectedItems.length === 0) {
-        alert("Your cart is empty. Please add items before checkout.");
-        return;
-    }
-
-    // Save order to localStorage
-    localStorage.setItem("orderData", JSON.stringify(selectedItems));
-
-    // Go to checkout page
-    window.location.href = "checkout.html";
-}
-
-// Function to return to the shop page
+// Function to go back to the shop page
 function returnToShop() {
     window.location.href = "index.html";
 }
 
-// Function to display order details on checkout page
+// Function to display order summary on checkout page
 function displayOrderSummary() {
     const orderData = JSON.parse(localStorage.getItem("orderData")) || [];
-
     const orderContainer = document.getElementById("order-summary");
 
     if (!orderContainer) return;
@@ -32,7 +15,7 @@ function displayOrderSummary() {
         return;
     }
 
-    let html = "";
+    let html = "<h2>Your Order</h2>";
     let totalPrice = 0;
 
     orderData.forEach(item => {
@@ -54,7 +37,48 @@ function displayOrderSummary() {
     orderContainer.innerHTML = html;
 }
 
-// Event binding when the page loads
+// Function to send order details by email
+function sendOrderByEmail() {
+    const orderData = JSON.parse(localStorage.getItem("orderData")) || [];
+
+    if (orderData.length === 0) {
+        alert("Your order is empty.");
+        return;
+    }
+
+    const name = document.getElementById("customer-name").value.trim();
+    const phone = document.getElementById("customer-phone").value.trim();
+
+    if (!name || !phone) {
+        alert("Please enter your name and phone number.");
+        return;
+    }
+
+    // Construct email body
+    let emailBody = `Hello,%0D%0A%0D%0A`;
+    emailBody += `I would like to place the following drink order:%0D%0A%0D%0A`;
+
+    let total = 0;
+
+    orderData.forEach(item => {
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+
+        emailBody += `- ${item.name} | Quantity: ${item.quantity} | Price: $${item.price} | Subtotal: $${subtotal}%0D%0A`;
+    });
+
+    emailBody += `%0D%0ATotal: $${total}%0D%0A%0D%0A`;
+    emailBody += `Customer Name: ${name}%0D%0A`;
+    emailBody += `Customer Phone: ${phone}%0D%0A%0D%0A`;
+    emailBody += `Thank you!`;
+
+    // Set mailto link
+    const mailtoLink = `mailto:samanthachu1223@gmail.com?subject=Drink Order&body=${emailBody}`;
+
+    window.location.href = mailtoLink;
+}
+
+// Page load event
 document.addEventListener("DOMContentLoaded", () => {
     if (window.location.pathname.includes("checkout.html")) {
         displayOrderSummary();
@@ -62,6 +86,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const backBtn = document.getElementById("back-to-shop");
         if (backBtn) {
             backBtn.addEventListener("click", returnToShop);
+        }
+
+        const emailBtn = document.getElementById("email-order");
+        if (emailBtn) {
+            emailBtn.addEventListener("click", sendOrderByEmail);
         }
     }
 });
