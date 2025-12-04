@@ -1,179 +1,67 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bubble Tea Shop</title>
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #fdf6e3; }
-    h1 { text-align: center; padding: 20px 0; background: #ffcc80; margin: 0; }
-    .container { display: flex; flex-wrap: wrap; justify-content: center; padding: 20px; gap: 20px; }
-    .product-card { background: white; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 15px; width: 220px; text-align: center; }
-    .product-card h3 { margin: 10px 0; }
-    .product-card .flex { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-    .product-card select, .product-card input { width: 100%; padding: 4px; }
-    .product-card button { margin-top: 10px; padding: 6px; background: #ff9800; border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; }
-    .product-card button:hover { background: #fb8c00; }
-    
-    /* Cart Sidebar */
-    #cartSidebar { position: fixed; top: 0; right: 0; width: 320px; height: 100%; background: #fff3e0; padding: 20px; box-shadow: -2px 0 6px rgba(0,0,0,0.2); overflow-y: auto; }
-    #cartSidebar h2 { margin-top: 0; }
-    .cart-item { border-bottom: 1px solid #ddd; padding: 8px 0; }
-    .cart-item button { background: #e53935; border: none; color: white; padding: 3px 6px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 5px; }
-    .cart-item button:hover { background: #d32f2f; }
-    #checkoutForm input { width: 100%; padding: 6px; margin: 4px 0; border-radius: 4px; border: 1px solid #ccc; }
-    #checkoutForm button { width: 100%; background: #43a047; color: white; border: none; padding: 8px; margin-top: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-    #checkoutForm button:hover { background: #388e3c; }
-
-    /* Responsive for mobile */
-    @media(max-width: 900px) { 
-      #cartSidebar { position: static; width: auto; height: auto; box-shadow: none; margin-top: 20px; }
-    }
-  </style>
-  <script>
-    emailjs.init("YOUR_EMAILJS_USER_ID"); // 替換成你的 EmailJS User ID
-
-    const PRODUCTS = [
-      {id:"p1",title:"Bubble Milk Tea",price:60,emoji:"🧋"},
-      {id:"p2",title:"Yakult Green Tea",price:55,emoji:"🍵"},
-      {id:"p3",title:"Matcha Latte",price:70,emoji:"🍵"},
-      {id:"p4",title:"Oolong Milk Tea",price:65,emoji:"🥛"},
-      {id:"p5",title:"Winter Melon Lemon",price:50,emoji:"🍋"},
-      {id:"p6",title:"Taro Milk Tea",price:65,emoji:"🟣"},
-      {id:"p7",title:"Brown Sugar Boba",price:75,emoji:"🧋"},
-      {id:"p8",title:"Thai Milk Tea",price:60,emoji:"🧡"},
-      {id:"p9",title:"Mango Smoothie",price:80,emoji:"🥭"},
-      {id:"p10",title:"Strawberry Milk Tea",price:70,emoji:"🍓"},
-      {id:"p11",title:"Caramel Latte",price:75,emoji:"☕"},
-      {id:"p12",title:"Lemon Green Tea",price:50,emoji:"🍋"},
-      {id:"p13",title:"Honey Milk Tea",price:65,emoji:"🍯"},
-      {id:"p14",title:"Passion Fruit Tea",price:60,emoji:"🟠"},
-      {id:"p15",title:"Coconut Smoothie",price:75,emoji:"🥥"},
-      {id:"p16",title:"Black Tea Latte",price:65,emoji:"☕"},
-      {id:"p17",title:"Peach Oolong Tea",price:60,emoji:"🍑"},
-      {id:"p18",title:"Hazelnut Latte",price:80,emoji:"🌰"},
-      {id:"p19",title:"Rose Milk Tea",price:70,emoji:"🌹"},
-      {id:"p20",title:"Watermelon Juice",price:55,emoji:"🍉"},
-      {id:"p21",title:"Chocolate Milk Tea",price:70,emoji:"🍫"},
-      {id:"p22",title:"Vanilla Latte",price:75,emoji:"☕"},
-      {id:"p23",title:"Lychee Tea",price:60,emoji:"🍇"},
-      {id:"p24",title:"Pineapple Smoothie",price:75,emoji:"🍍"},
-      {id:"p25",title:"Earl Grey Milk Tea",price:65,emoji:"☕"},
-      {id:"p26",title:"Kiwi Fruit Tea",price:60,emoji:"🥝"},
-      {id:"p27",title:"Mocha Latte",price:80,emoji:"☕"},
-      {id:"p28",title:"Almond Milk Tea",price:70,emoji:"🥜"},
-      {id:"p29",title:"Blueberry Smoothie",price:80,emoji:"🫐"},
-      {id:"p30",title:"Jasmine Green Tea",price:50,emoji:"🌸"},
-    ];
-
-    const SIZE_OPTIONS = { "Medium": 0, "Large": 10 };
-    const SUGAR_OPTIONS = ["Regular", "Less Sugar", "Half Sugar", "Slightly Sweet", "No Sugar"];
-    const ICE_OPTIONS = ["Regular Ice", "Less Ice", "No Ice", "Hot"];
-
-    let cart = [];
-
-    function addToCart(pid){
-      const size = document.getElementById(`size_${pid}`).value;
-      const sugar = document.getElementById(`sugar_${pid}`).value;
-      const ice = document.getElementById(`ice_${pid}`).value;
-      const qty = parseInt(document.getElementById(`qty_${pid}`).value);
-      cart.push({pid,size,sugar,ice,qty});
-      renderCart();
-    }
-
-    function renderCart(){
-      const cartDiv = document.getElementById("cartItems");
-      cartDiv.innerHTML = "";
-      let total = 0;
-      cart.forEach((item,index)=>{
-        const product = PRODUCTS.find(p=>p.id===item.pid);
-        const sizePrice = SIZE_OPTIONS[item.size]||0;
-        const itemTotal = (product.price+sizePrice)*item.qty;
-        total+=itemTotal;
-        const div=document.createElement("div");
-        div.className="cart-item";
-        div.innerHTML=`${product.emoji} <b>${product.title}</b> (${item.size}|${item.sugar}|${item.ice}) × ${item.qty} = NT$ ${itemTotal} 
-        <button onclick="removeCartItem(${index})">Remove</button>`;
-        cartDiv.appendChild(div);
-      });
-      document.getElementById("cartTotal").innerText=`Total: NT$ ${total}`;
-    }
-
-    function removeCartItem(index){ cart.splice(index,1); renderCart(); }
-
-    function placeOrder(event){
-      event.preventDefault();
-      if(cart.length===0){ alert("Cart is empty!"); return; }
-      const name=document.getElementById("name").value;
-      const phone=document.getElementById("phone").value;
-      const email=document.getElementById("email").value;
-      if(!name||!phone||!email){ alert("Please fill all fields"); return; }
-
-      let orderDetails=cart.map(item=>{
-        const product=PRODUCTS.find(p=>p.id===item.pid);
-        const sizePrice=SIZE_OPTIONS[item.size]||0;
-        return `${product.title} (${item.size}|${item.sugar}|${item.ice}) × ${item.qty} = NT$ ${(product.price+sizePrice)*item.qty}`;
-      }).join("\n");
-
-      const total=cart.reduce((sum,item)=>{
-        const product=PRODUCTS.find(p=>p.id===item.pid);
-        const sizePrice=SIZE_OPTIONS[item.size]||0;
-        return sum+(product.price+sizePrice)*item.qty;
-      },0);
-
-      const templateParams={
-        to_email:"samanthachu1223@gmail.com",
-        customer_name:name,
-        customer_phone:phone,
-        customer_email:email,
-        order_details:orderDetails,
-        total_amount:total
-      };
-
-      emailjs.send('YOUR_SERVICE_ID','YOUR_TEMPLATE_ID',templateParams)
-      .then(function(response){
-        alert("Order placed successfully!");
-        cart=[];
-        renderCart();
-        document.getElementById("checkoutForm").reset();
-      },function(error){
-        alert("Failed to send order. Please try again.");
-      });
-    }
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout</title>
+<style>
+body{font-family:Arial;margin:20px;background:#fdf6e3;}
+h1{text-align:center;}
+#order-summary{margin-bottom:20px;}
+label{display:block;margin-top:10px;}
+input{padding:5px;width:100%;max-width:300px;margin-top:5px;}
+button{margin-top:15px;padding:8px 15px;background:#43a047;color:white;border:none;border-radius:5px;cursor:pointer;}
+button:hover{background:#388e3c;}
+</style>
 </head>
 <body>
-  <h1>🧋 Bubble Tea Shop</h1>
+<h1>🛒 Checkout</h1>
+<div id="order-summary"></div>
 
-  <div class="container">
-    ${PRODUCTS.map(p=>`
-      <div class="product-card">
-        <h3>${p.emoji} ${p.title}</h3>
-        <p>NT$ ${p.price}</p>
-        <div class="flex">
-          <div>Size:<select id="size_${p.id}">${Object.keys(SIZE_OPTIONS).map(s=>`<option>${s}</option>`).join("")}</select></div>
-          <div>Sugar:<select id="sugar_${p.id}">${SUGAR_OPTIONS.map(s=>`<option>${s}</option>`).join("")}</select></div>
-          <div>Ice:<select id="ice_${p.id}">${ICE_OPTIONS.map(s=>`<option>${s}</option>`).join("")}</select></div>
-          <div>Qty:<input type="number" id="qty_${p.id}" value="1" min="1"></div>
-        </div>
-        <button onclick="addToCart('${p.id}')">Add to Cart</button>
-      </div>
-    `).join("")}
-  </div>
+<label for="customer-name">Name:</label>
+<input type="text" id="customer-name" placeholder="Your Name">
+<label for="customer-phone">Phone:</label>
+<input type="text" id="customer-phone" placeholder="Your Phone Number">
 
-  <div id="cartSidebar">
-    <h2>🛒 Shopping Cart</h2>
-    <div id="cartItems"></div>
-    <div id="cartTotal">Total: NT$ 0</div>
+<button id="email-order">Send Order by Email</button>
+<button id="back-to-shop">Return to Shop</button>
 
-    <h2>Checkout</h2>
-    <form id="checkoutForm" onsubmit="placeOrder(event)">
-      Name:<input type="text" id="name" required>
-      Phone:<input type="text" id="phone" required>
-      Email:<input type="email" id="email" required>
-      <button type="submit">Place Order</button>
-    </form>
-  </div>
+<script>
+function returnToShop(){window.location.href="shop.html";}
+
+function displayOrderSummary(){
+  const orderData=JSON.parse(localStorage.getItem("orderData"))||[];
+  const container=document.getElementById("order-summary");
+  if(orderData.length===0){container.innerHTML="<p>No items found in your order.</p>";return;}
+  let html="<h2>Your Order</h2><ul>";
+  let total=0;
+  orderData.forEach(item=>{
+    const subtotal=item.price*item.quantity; total+=subtotal;
+    html+=`<li>${item.name} | ${item.size}|${item.sugar}|${item.ice} × ${item.quantity} = $${subtotal}</li>`;
+  });
+  html+=`</ul><p><b>Total: $${total}</b></p>`;
+  container.innerHTML=html;
+}
+
+function sendOrderByEmail(){
+  const orderData=JSON.parse(localStorage.getItem("orderData"))||[];
+  if(orderData.length===0){alert("Your order is empty.");return;}
+  const name=document.getElementById("customer-name").value.trim();
+  const phone=document.getElementById("customer-phone").value.trim();
+  if(!name||!phone){alert("Please enter your name and phone.");return;}
+  let emailBody="Hello,%0D%0A%0D%0AI would like to place the following drink order:%0D%0A%0D%0A";
+  let total=0;
+  orderData.forEach(item=>{const subtotal=item.price*item.quantity;total+=subtotal;
+  emailBody+=`- ${item.name} | ${item.size}|${item.sugar}|${item.ice} × ${item.quantity} = $${subtotal}%0D%0A`;});
+  emailBody+=`%0D%0ATotal: $${total}%0D%0A%0D%0ACustomer Name: ${name}%0D%0ACustomer Phone: ${phone}%0D%0A%0D%0AThank you!`;
+  window.location.href=`mailto:samanthachu1223@gmail.com?subject=Drink Order&body=${emailBody}`;
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  displayOrderSummary();
+  document.getElementById("back-to-shop").addEventListener("click",returnToShop);
+  document.getElementById("email-order").addEventListener("click",sendOrderByEmail);
+});
+</script>
 </body>
 </html>
