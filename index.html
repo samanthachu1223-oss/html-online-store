@@ -322,18 +322,44 @@
             }
 
             const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const orderDetails = cart.map(item => 
-                `${item.name} - $${item.price.toFixed(2)} × ${item.quantity} = $${(item.price * item.quantity).toFixed(2)}`
-            ).join('%0A');
+            
+            const orderText = cart.map(item => 
+                `${item.name} - ${item.price.toFixed(2)} × ${item.quantity} = ${(item.price * item.quantity).toFixed(2)}`
+            ).join('\n');
 
-            const subject = encodeURIComponent('New Order from Online Store');
-            const body = encodeURIComponent(
-                `Hello,\n\nI would like to place an order:\n\n${cart.map(item => 
-                    `${item.name} - $${item.price.toFixed(2)} × ${item.quantity} = $${(item.price * item.quantity).toFixed(2)}`
-                ).join('\n')}\n\nTotal: $${totalPrice.toFixed(2)}\n\nThank you!`
-            );
+            const emailBody = `Hello,
 
-            window.location.href = `mailto:store@example.com?subject=${subject}&body=${body}`;
+I would like to place an order:
+
+${orderText}
+
+Total: ${totalPrice.toFixed(2)}
+
+Thank you!`;
+
+            // Show order summary
+            const orderSummary = `Order Summary:\n\n${orderText}\n\nTotal: ${totalPrice.toFixed(2)}\n\nClick OK to open your email client, or click Cancel to copy the order details.`;
+            
+            if (confirm(orderSummary)) {
+                // Try to open email client
+                const subject = encodeURIComponent('New Order from Online Store');
+                const body = encodeURIComponent(emailBody);
+                const mailtoLink = `mailto:store@example.com?subject=${subject}&body=${body}`;
+                
+                window.location.href = mailtoLink;
+                
+                // Show confirmation
+                setTimeout(() => {
+                    alert('If your email client didn\'t open, please copy the order details and send to: store@example.com');
+                }, 1000);
+            } else {
+                // Copy to clipboard
+                navigator.clipboard.writeText(emailBody).then(() => {
+                    alert('Order details copied to clipboard! Please paste and send to: store@example.com');
+                }).catch(() => {
+                    alert(`Please copy this and email to store@example.com:\n\n${emailBody}`);
+                });
+            }
         }
 
         renderProducts();
