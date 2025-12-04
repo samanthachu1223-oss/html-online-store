@@ -102,3 +102,76 @@ renderProducts();
 </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout</title>
+<style>
+body{font-family:Arial;margin:20px;background:#fdf6e3;}
+h1{text-align:center;}
+#order-summary{margin-bottom:20px;}
+label{display:block;margin-top:10px;}
+input{padding:5px;width:100%;max-width:300px;margin-top:5px;}
+button{margin-top:15px;padding:8px 15px;background:#43a047;color:white;border:none;border-radius:5px;cursor:pointer;}
+button:hover{background:#388e3c;}
+</style>
+</head>
+<body>
+<h1>🛒 Checkout</h1>
+<div id="order-summary"></div>
+
+<label for="customer-name">Name:</label>
+<input type="text" id="customer-name" placeholder="Your Name">
+<label for="customer-phone">Phone:</label>
+<input type="text" id="customer-phone" placeholder="Your Phone Number">
+
+<button id="email-order">Send Order by Email</button>
+<button id="back-to-shop">Return to Shop</button>
+
+<script>
+// ------------------- Return to Shop -------------------
+function returnToShop(){ window.location.href="shop.html"; }
+
+// ------------------- Display Order -------------------
+function displayOrderSummary(){
+  const orderData=JSON.parse(localStorage.getItem("orderData"))||[];
+  const container=document.getElementById("order-summary");
+  if(orderData.length===0){ container.innerHTML="<p>Your cart is empty.</p>"; return; }
+  let html="<h2>Your Order</h2><ul>";
+  let total=0;
+  orderData.forEach(item=>{
+    const subtotal=item.price*item.quantity; total+=subtotal;
+    html+=`<li>${item.name} | ${item.size} | ${item.sugar} | ${item.ice} × ${item.quantity} = $${subtotal}</li>`;
+  });
+  html+=`</ul><p><b>Total: $${total}</b></p>`;
+  container.innerHTML=html;
+}
+
+// ------------------- Send Order by Email -------------------
+function sendOrderByEmail(){
+  const orderData=JSON.parse(localStorage.getItem("orderData"))||[];
+  if(orderData.length===0){alert("Your cart is empty.");return;}
+  const name=document.getElementById("customer-name").value.trim();
+  const phone=document.getElementById("customer-phone").value.trim();
+  if(!name||!phone){alert("Please enter your name and phone number.");return;}
+  let emailBody="Hello,%0D%0A%0D%0AI would like to place the following drink order:%0D%0A%0D%0A";
+  let total=0;
+  orderData.forEach(item=>{
+    const subtotal=item.price*item.quantity; total+=subtotal;
+    emailBody+=`- ${item.name} | ${item.size} | ${item.sugar} | ${item.ice} × ${item.quantity} = $${subtotal}%0D%0A`;
+  });
+  emailBody+=`%0D%0ATotal: $${total}%0D%0A%0D%0ACustomer Name: ${name}%0D%0ACustomer Phone: ${phone}%0D%0A%0D%0AThank you!`;
+  window.location.href=`mailto:samanthachu1223@gmail.com?subject=Drink Order&body=${emailBody}`;
+}
+
+// ------------------- Initialize -------------------
+document.addEventListener("DOMContentLoaded",()=>{
+  displayOrderSummary();
+  document.getElementById("back-to-shop").addEventListener("click",returnToShop);
+  document.getElementById("email-order").addEventListener("click",sendOrderByEmail);
+});
+</script>
+</body>
+</html>
