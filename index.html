@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,14 +27,14 @@ button:hover{background:#388e3c;}
 <button id="back-to-shop">Return to Shop</button>
 
 <script>
-// ------------------- 返回商店 -------------------
+// ------------------- Return to Shop -------------------
 function returnToShop(){ window.location.href="shop.html"; }
 
-// ------------------- 顯示訂單明細 -------------------
+// ------------------- Display Order -------------------
 function displayOrderSummary(){
   const orderData=JSON.parse(localStorage.getItem("orderData"))||[];
   const container=document.getElementById("order-summary");
-  if(orderData.length===0){ container.innerHTML="<p>No items found in your order.</p>"; return; }
+  if(orderData.length===0){ container.innerHTML="<p>Your cart is empty.</p>"; return; }
   let html="<h2>Your Order</h2><ul>";
   let total=0;
   orderData.forEach(item=>{
@@ -45,13 +45,13 @@ function displayOrderSummary(){
   container.innerHTML=html;
 }
 
-// ------------------- 寄送訂單 Email -------------------
+// ------------------- Send Order by Email -------------------
 function sendOrderByEmail(){
   const orderData=JSON.parse(localStorage.getItem("orderData"))||[];
-  if(orderData.length===0){alert("Your order is empty.");return;}
+  if(orderData.length===0){alert("Your cart is empty.");return;}
   const name=document.getElementById("customer-name").value.trim();
   const phone=document.getElementById("customer-phone").value.trim();
-  if(!name||!phone){alert("Please enter your name and phone.");return;}
+  if(!name||!phone){alert("Please enter your name and phone number.");return;}
   let emailBody="Hello,%0D%0A%0D%0AI would like to place the following drink order:%0D%0A%0D%0A";
   let total=0;
   orderData.forEach(item=>{
@@ -62,7 +62,7 @@ function sendOrderByEmail(){
   window.location.href=`mailto:samanthachu1223@gmail.com?subject=Drink Order&body=${emailBody}`;
 }
 
-// ------------------- 初始化 -------------------
+// ------------------- Initialize -------------------
 document.addEventListener("DOMContentLoaded",()=>{
   displayOrderSummary();
   document.getElementById("back-to-shop").addEventListener("click",returnToShop);
