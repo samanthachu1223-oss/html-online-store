@@ -3,71 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout</title>
+<title>Bubble Tea Shop</title>
 <style>
-body{font-family:Arial;margin:20px;background:#fdf6e3;}
-h1{text-align:center;}
-#order-summary{margin-bottom:20px;}
-label{display:block;margin-top:10px;}
-input{padding:5px;width:100%;max-width:300px;margin-top:5px;}
-button{margin-top:15px;padding:8px 15px;background:#43a047;color:white;border:none;border-radius:5px;cursor:pointer;}
-button:hover{background:#388e3c;}
+body { font-family: Arial, sans-serif; margin: 0; background: #fdf6e3; }
+h1 { text-align: center; padding: 20px 0; background: #ffcc80; margin: 0; }
+.container { display: flex; flex-wrap: wrap; justify-content: center; padding: 20px; gap: 20px; }
+.product-card { background: white; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 15px; width: 220px; text-align: center; }
+.product-card h3 { margin: 10px 0; }
+.product-card .flex { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; text-align: left; }
+.product-card select, .product-card input { width: 100%; padding: 4px; }
+button { margin-top: 10px; padding: 6px; background: #ff9800; border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; }
+button:hover { background: #fb8c00; }
+#view-cart { position: fixed; top: 20px; right: 20px; padding: 10px 15px; background: #43a047; color: white; border: none; border-radius: 6px; cursor: pointer; }
+#view-cart:hover { background: #388e3c; }
 </style>
 </head>
 <body>
-<h1>🛒 Checkout</h1>
-<div id="order-summary"></div>
-
-<label for="customer-name">Name:</label>
-<input type="text" id="customer-name" placeholder="Your Name">
-<label for="customer-phone">Phone:</label>
-<input type="text" id="customer-phone" placeholder="Your Phone Number">
-
-<button id="email-order">Send Order by Email</button>
-<button id="back-to-shop">Return to Shop</button>
+<h1>🧋 Bubble Tea Shop</h1>
+<div class="container" id="productContainer"></div>
+<button id="view-cart">View Cart / Checkout</button>
 
 <script>
-// ------------------- Return to Shop -------------------
-function returnToShop(){ window.location.href="shop.html"; }
+// ------------------- Product Data -------------------
+const PRODUCTS = [
+  {id:"p1",title:"Bubble Milk Tea",price:60,emoji:"🧋"}, {id:"p2",title:"Yakult Green Tea",price:55,emoji:"🍵"},
+  {id:"p3",title:"Matcha Latte",price:70,emoji:"🍵"}, {id:"p4",title:"Oolong Milk Tea",price:65,emoji:"🥛"},
+  {id:"p5",title:"Winter Melon Lemon",price:50,emoji:"🍋"}, {id:"p6",title:"Taro Milk Tea",price:65,emoji:"🟣"},
+  {id:"p7",title:"Brown Sugar Boba",price:75,emoji:"🧋"}, {id:"p8",title:"Thai Milk Tea",price:60,emoji:"🧡"},
+  {id:"p9",title:"Mango Smoothie",price:80,emoji:"🥭"}, {id:"p10",title:"Strawberry Milk Tea",price:70,emoji:"🍓"},
+  {id:"p11",title:"Caramel Latte",price:75,emoji:"☕"}, {id:"p12",title:"Lemon Green Tea",price:50,emoji:"🍋"},
+  {id:"p13",title:"Honey Milk Tea",price:65,emoji:"🍯"}, {id:"p14",title:"Passion Fruit Tea",price:60,emoji:"🟠"},
+  {id:"p15",title:"Coconut Smoothie",price:75,emoji:"🥥"}, {id:"p16",title:"Black Tea Latte",price:65,emoji:"☕"},
+  {id:"p17",title:"Peach Oolong Tea",price:60,emoji:"🍑"}, {id:"p18",title:"Hazelnut Latte",price:80,emoji:"🌰"},
+  {id:"p19",title:"Rose Milk Tea",price:70,emoji:"🌹"}, {id:"p20",title:"Watermelon Juice",price:55,emoji:"🍉"},
+  {id:"p21",title:"Chocolate Milk Tea",price:70,emoji:"🍫"}, {id:"p22",title:"Vanilla Latte",price:75,emoji:"☕"},
+  {id:"p23",title:"Lychee Tea",price:60,emoji:"🍇"}, {id:"p24",title:"Pineapple Smoothie",price:75,emoji:"🍍"},
+  {id:"p25",title:"Earl Grey Milk Tea",price:65,emoji:"☕"}, {id:"p26",title:"Kiwi Fruit Tea",price:60,emoji:"🥝"},
+  {id:"p27",title:"Mocha Latte",price:80,emoji:"☕"}, {id:"p28",title:"Almond Milk Tea",price:70,emoji:"🥜"},
+  {id:"p29",title:"Blueberry Smoothie",price:80,emoji:"🫐"}, {id:"p30",title:"Jasmine Green Tea",price:50,emoji:"🌸"}
+];
 
-// ------------------- Display Order -------------------
-function displayOrderSummary(){
-  const orderData=JSON.parse(localStorage.getItem("orderData"))||[];
-  const container=document.getElementById("order-summary");
-  if(orderData.length===0){ container.innerHTML="<p>Your cart is empty.</p>"; return; }
-  let html="<h2>Your Order</h2><ul>";
-  let total=0;
-  orderData.forEach(item=>{
-    const subtotal=item.price*item.quantity; total+=subtotal;
-    html+=`<li>${item.name} | ${item.size} | ${item.sugar} | ${item.ice} × ${item.quantity} = $${subtotal}</li>`;
+const SIZE_OPTIONS = { "Medium": 0, "Large": 10 };
+const SUGAR_OPTIONS = ["Regular","Less Sugar","Half Sugar","Slightly Sweet","No Sugar"];
+const ICE_OPTIONS = ["Regular Ice","Less Ice","No Ice","Hot"];
+
+// ------------------- Render Products -------------------
+function renderProducts(){
+  const container = document.getElementById("productContainer");
+  PRODUCTS.forEach(p=>{
+    const card = document.createElement("div");
+    card.className="product-card";
+    card.innerHTML = `
+      <h3>${p.emoji} ${p.title}</h3>
+      <p>Price: $${p.price}</p>
+      <div class="flex">
+        <div>Size:
+          <select id="size_${p.id}">
+            ${Object.keys(SIZE_OPTIONS).map(s=>`<option>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div>Sugar:
+          <select id="sugar_${p.id}">
+            ${SUGAR_OPTIONS.map(s=>`<option>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div>Ice:
+          <select id="ice_${p.id}">
+            ${ICE_OPTIONS.map(s=>`<option>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div>Quantity:<input type="number" id="qty_${p.id}" value="1" min="1"></div>
+      </div>
+      <button onclick="addToCart('${p.id}')">Add to Cart</button>
+    `;
+    container.appendChild(card);
   });
-  html+=`</ul><p><b>Total: $${total}</b></p>`;
-  container.innerHTML=html;
 }
 
-// ------------------- Send Order by Email -------------------
-function sendOrderByEmail(){
-  const orderData=JSON.parse(localStorage.getItem("orderData"))||[];
-  if(orderData.length===0){alert("Your cart is empty.");return;}
-  const name=document.getElementById("customer-name").value.trim();
-  const phone=document.getElementById("customer-phone").value.trim();
-  if(!name||!phone){alert("Please enter your name and phone number.");return;}
-  let emailBody="Hello,%0D%0A%0D%0AI would like to place the following drink order:%0D%0A%0D%0A";
-  let total=0;
-  orderData.forEach(item=>{
-    const subtotal=item.price*item.quantity; total+=subtotal;
-    emailBody+=`- ${item.name} | ${item.size} | ${item.sugar} | ${item.ice} × ${item.quantity} = $${subtotal}%0D%0A`;
-  });
-  emailBody+=`%0D%0ATotal: $${total}%0D%0A%0D%0ACustomer Name: ${name}%0D%0ACustomer Phone: ${phone}%0D%0A%0D%0AThank you!`;
-  window.location.href=`mailto:samanthachu1223@gmail.com?subject=Drink Order&body=${emailBody}`;
+// ------------------- Add to Cart -------------------
+function addToCart(pid){
+  const size = document.getElementById(`size_${pid}`).value;
+  const sugar = document.getElementById(`sugar_${pid}`).value;
+  const ice = document.getElementById(`ice_${pid}`).value;
+  const qty = parseInt(document.getElementById(`qty_${pid}`).value);
+  let cart = JSON.parse(localStorage.getItem("orderData")) || [];
+  cart.push({id:pid,name:PRODUCTS.find(p=>p.id===pid).title,size,sugar,ice,quantity:qty,price:PRODUCTS.find(p=>p.id===pid).price});
+  localStorage.setItem("orderData",JSON.stringify(cart));
+  alert("Added to cart!");
 }
+
+// ------------------- Go to Checkout -------------------
+document.getElementById("view-cart").addEventListener("click",()=>{
+  window.location.href="checkout.html";
+});
 
 // ------------------- Initialize -------------------
-document.addEventListener("DOMContentLoaded",()=>{
-  displayOrderSummary();
-  document.getElementById("back-to-shop").addEventListener("click",returnToShop);
-  document.getElementById("email-order").addEventListener("click",sendOrderByEmail);
-});
+renderProducts();
 </script>
 </body>
 </html>
