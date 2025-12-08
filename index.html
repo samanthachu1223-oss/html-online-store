@@ -230,16 +230,25 @@
         
         <div class="checkout-form" id="checkoutForm">
             <h3>Enter Your Details</h3>
-            <div class="form-group">
-                <label>Name *</label>
-                <input type="text" id="customerName" placeholder="Your full name">
-            </div>
-            <div class="form-group">
-                <label>Email *</label>
-                <input type="email" id="customerEmail" placeholder="your.email@example.com">
-            </div>
-            <button class="submit-order-btn" onclick="submitOrder()">Submit Order</button>
-            <button class="back-btn" onclick="hideCheckout()">Back to Cart</button>
+            <form id="orderForm" action="https://formsubmit.co/samanthachu1223@gmail.com" method="POST">
+                <input type="hidden" name="_subject" value="New Order from Online Store">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+                
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input type="text" name="name" id="customerName" placeholder="Your full name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" id="customerEmail" placeholder="your.email@example.com" required>
+                </div>
+                <input type="hidden" name="order" id="orderDetails">
+                <input type="hidden" name="total" id="orderTotal">
+                
+                <button type="submit" class="submit-order-btn">Submit Order</button>
+                <button type="button" class="back-btn" onclick="hideCheckout()">Back to Cart</button>
+            </form>
         </div>
     </div>
 
@@ -344,6 +353,19 @@
                 alert("Your cart is empty!");
                 return;
             }
+            
+            // Prepare order details
+            var total = 0;
+            var orderText = "";
+            for (var i = 0; i < cart.length; i++) {
+                var item = cart[i];
+                total += item.price * item.quantity;
+                orderText += item.name + " - $" + item.price.toFixed(2) + " x " + item.quantity + " = $" + (item.price * item.quantity).toFixed(2) + "; ";
+            }
+            
+            document.getElementById("orderDetails").value = orderText;
+            document.getElementById("orderTotal").value = "$" + total.toFixed(2);
+            
             document.getElementById("checkoutBtn").style.display = "none";
             document.getElementById("cartItems").style.display = "none";
             document.getElementById("cartTotal").style.display = "none";
