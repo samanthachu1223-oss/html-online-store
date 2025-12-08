@@ -255,26 +255,16 @@
         
         <div class="checkout-form" id="checkoutForm">
             <h3>Enter Your Details</h3>
-            <form id="orderForm" action="https://formsubmit.co/samanthachu1223@gmail.com" method="POST">
-                <input type="hidden" name="_subject" value="New Order from Online Store">
-                <input type="hidden" name="_captcha" value="false">
-                <input type="hidden" name="_template" value="table">
-                <input type="hidden" name="_next" value="https://samanthachu1223-oss.github.io/html-online-store/">
-                
-                <div class="form-group">
-                    <label>Name *</label>
-                    <input type="text" name="name" id="customerName" placeholder="Your full name" required>
-                </div>
-                <div class="form-group">
-                    <label>Email *</label>
-                    <input type="email" name="email" id="customerEmail" placeholder="your.email@example.com" required>
-                </div>
-                <input type="hidden" name="order" id="orderDetails">
-                <input type="hidden" name="total" id="orderTotal">
-                
-                <button type="submit" class="submit-order-btn" onclick="return confirmSubmit()">Submit Order</button>
-                <button type="button" class="back-btn" onclick="hideCheckout()">Back to Cart</button>
-            </form>
+            <div class="form-group">
+                <label>Name *</label>
+                <input type="text" id="customerName" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" id="customerEmail" placeholder="your.email@example.com" required>
+            </div>
+            <button class="submit-order-btn" onclick="submitOrderNow()">Submit Order</button>
+            <button class="back-btn" onclick="hideCheckout()">Back to Cart</button>
         </div>
     </div>
 
