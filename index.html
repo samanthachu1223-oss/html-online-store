@@ -134,8 +134,33 @@
         .cart-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 15px;
             border-bottom: 1px solid #ecf0f1;
+        }
+        .cart-item-info {
+            flex: 1;
+        }
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .quantity-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+        .quantity-display {
+            min-width: 30px;
+            text-align: center;
+            font-weight: bold;
         }
         .remove-item {
             background: #ff4757;
@@ -334,12 +359,45 @@
                 for (var i = 0; i < cart.length; i++) {
                     var item = cart[i];
                     html += "<div class='cart-item'>";
-                    html += "<div><strong>" + item.name + "</strong><br>$" + item.price.toFixed(2) + " × " + item.quantity + "</div>";
-                    html += "<button class='remove-item' onclick='removeFromCart(" + item.id + ")'>Remove</button>";
+                    html += "<div class='cart-item-info'>";
+                    html += "<div><strong>" + item.name + "</strong></div>";
+                    html += "<div>$" + item.price.toFixed(2) + " each</div>";
+                    html += "<div class='quantity-controls'>";
+                    html += "<button class='quantity-btn' onclick='decreaseQuantity(" + item.id + ")'>-</button>";
+                    html += "<span class='quantity-display'>" + item.quantity + "</span>";
+                    html += "<button class='quantity-btn' onclick='increaseQuantity(" + item.id + ")'>+</button>";
+                    html += "</div>";
+                    html += "</div>";
+                    html += "<button class='remove-item' onclick='removeFromCart(" + item.id + ")'>Remove All</button>";
                     html += "</div>";
                 }
                 document.getElementById("cartItems").innerHTML = html;
             }
+        }
+
+        function increaseQuantity(id) {
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    cart[i].quantity++;
+                    break;
+                }
+            }
+            updateCart();
+        }
+
+        function decreaseQuantity(id) {
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    if (cart[i].quantity > 1) {
+                        cart[i].quantity--;
+                    } else {
+                        // If quantity is 1, remove the item
+                        cart.splice(i, 1);
+                    }
+                    break;
+                }
+            }
+            updateCart();
         }
 
         function toggleCart() {
