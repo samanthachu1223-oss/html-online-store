@@ -1,166 +1,396 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bubble Tea Shop</title>
-<style>
-body { font-family: Arial, sans-serif; margin: 0; background: #fdf6e3; }
-h1 { text-align: center; padding: 20px 0; background: #ffcc80; margin: 0; }
-.container { display: flex; flex-wrap: wrap; justify-content: center; padding: 20px; gap: 20px; }
-.product-card { background: white; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 15px; width: 220px; text-align: center; }
-.product-card h3 { margin: 10px 0; }
-.product-card .flex { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; text-align: left; }
-.product-card select, .product-card input { width: 100%; padding: 4px; }
-button { margin-top: 10px; padding: 6px; background: #ff9800; border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; }
-button:hover { background: #fb8c00; }
-#view-cart { position: fixed; top: 20px; right: 20px; padding: 10px 15px; background: #43a047; color: white; border: none; border-radius: 6px; cursor: pointer; }
-#view-cart:hover { background: #388e3c; }
-#checkout { display: none; padding: 20px; max-width: 600px; margin: auto; }
-#order-summary ul { list-style: none; padding-left: 0; }
-label{display:block;margin-top:10px;}
-input{padding:5px;width:100%;max-width:300px;margin-top:5px;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .cart-icon {
+            cursor: pointer;
+            font-size: 1.5em;
+            display: inline-block;
+            position: relative;
+            margin-left: 20px;
+        }
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 40px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+        .product-emoji {
+            font-size: 4em;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .product-title {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        .product-description {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        .product-price {
+            font-size: 1.5em;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .add-to-cart-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .cart-sidebar {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            transition: right 0.3s;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .cart-sidebar.active {
+            right: 0;
+        }
+        .cart-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .close-cart {
+            cursor: pointer;
+            font-size: 1.5em;
+        }
+        .cart-items {
+            padding: 20px;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .remove-item {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .cart-total {
+            padding: 20px;
+            border-top: 2px solid #667eea;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .checkout-btn {
+            width: calc(100% - 40px);
+            margin: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        .checkout-form {
+            padding: 20px;
+            display: none;
+        }
+        .checkout-form.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+        }
+        .submit-order-btn, .back-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .submit-order-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .back-btn {
+            background: #95a5a6;
+            color: white;
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+    </style>
 </head>
 <body>
-<h1>🧋 Bubble Tea Shop</h1>
+    <div class="container">
+        <header>
+            <h1>🛍️ Online Store</h1>
+            <p>Shop our amazing products!</p>
+            <div class="cart-icon" onclick="toggleCart()">
+                🛒
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
+        </header>
+        <div class="products" id="products"></div>
+    </div>
 
-<!-- Menu Section -->
-<div id="menu" class="container"></div>
-<button id="view-cart">View Cart / Checkout</button>
-
-<!-- Checkout Section -->
-<div id="checkout">
-  <h2>🛒 Checkout</h2>
-  <div id="order-summary"></div>
-
-  <label for="customer-name">Name:</label>
-  <input type="text" id="customer-name" placeholder="Your Name">
-  <label for="customer-phone">Phone:</label>
-  <input type="text" id="customer-phone" placeholder="Your Phone Number">
-
-  <button id="email-order">Send Order by Email</button>
-  <button id="back-to-shop">Return to Shop</button>
-</div>
-
-<script>
-// ------------------- Product Data -------------------
-const PRODUCTS = [
-  {id:"p1",title:"Bubble Milk Tea",price:60,emoji:"🧋"}, {id:"p2",title:"Yakult Green Tea",price:55,emoji:"🍵"},
-  {id:"p3",title:"Matcha Latte",price:70,emoji:"🍵"}, {id:"p4",title:"Oolong Milk Tea",price:65,emoji:"🥛"},
-  {id:"p5",title:"Winter Melon Lemon",price:50,emoji:"🍋"}, {id:"p6",title:"Taro Milk Tea",price:65,emoji:"🟣"},
-  {id:"p7",title:"Brown Sugar Boba",price:75,emoji:"🧋"}, {id:"p8",title:"Thai Milk Tea",price:60,emoji:"🧡"},
-  {id:"p9",title:"Mango Smoothie",price:80,emoji:"🥭"}, {id:"p10",title:"Strawberry Milk Tea",price:70,emoji:"🍓"},
-  {id:"p11",title:"Caramel Latte",price:75,emoji:"☕"}, {id:"p12",title:"Lemon Green Tea",price:50,emoji:"🍋"},
-  {id:"p13",title:"Honey Milk Tea",price:65,emoji:"🍯"}, {id:"p14",title:"Passion Fruit Tea",price:60,emoji:"🟠"},
-  {id:"p15",title:"Coconut Smoothie",price:75,emoji:"🥥"}, {id:"p16",title:"Black Tea Latte",price:65,emoji:"☕"},
-  {id:"p17",title:"Peach Oolong Tea",price:60,emoji:"🍑"}, {id:"p18",title:"Hazelnut Latte",price:80,emoji:"🌰"},
-  {id:"p19",title:"Rose Milk Tea",price:70,emoji:"🌹"}, {id:"p20",title:"Watermelon Juice",price:55,emoji:"🍉"},
-  {id:"p21",title:"Chocolate Milk Tea",price:70,emoji:"🍫"}, {id:"p22",title:"Vanilla Latte",price:75,emoji:"☕"},
-  {id:"p23",title:"Lychee Tea",price:60,emoji:"🍇"}, {id:"p24",title:"Pineapple Smoothie",price:75,emoji:"🍍"},
-  {id:"p25",title:"Earl Grey Milk Tea",price:65,emoji:"☕"}, {id:"p26",title:"Kiwi Fruit Tea",price:60,emoji:"🥝"},
-  {id:"p27",title:"Mocha Latte",price:80,emoji:"☕"}, {id:"p28",title:"Almond Milk Tea",price:70,emoji:"🥜"},
-  {id:"p29",title:"Blueberry Smoothie",price:80,emoji:"🫐"}, {id:"p30",title:"Jasmine Green Tea",price:50,emoji:"🌸"}
-];
-
-const SIZE_OPTIONS = { "Medium": 0, "Large": 10 };
-const SUGAR_OPTIONS = ["Regular","Less Sugar","Half Sugar","Slightly Sweet","No Sugar"];
-const ICE_OPTIONS = ["Regular Ice","Less Ice","No Ice","Hot"];
-
-// ------------------- Render Menu -------------------
-function renderMenu(){
-  const container = document.getElementById("menu");
-  container.innerHTML="";
-  PRODUCTS.forEach(p=>{
-    const card = document.createElement("div");
-    card.className="product-card";
-    card.innerHTML = `
-      <h3>${p.emoji} ${p.title}</h3>
-      <p>Price: $${p.price}</p>
-      <div class="flex">
-        <div>Size:
-          <select id="size_${p.id}">${Object.keys(SIZE_OPTIONS).map(s=>`<option>${s}</option>`).join('')}</select>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2>Shopping Cart</h2>
+            <span class="close-cart" onclick="toggleCart()">✕</span>
         </div>
-        <div>Sugar:
-          <select id="sugar_${p.id}">${SUGAR_OPTIONS.map(s=>`<option>${s}</option>`).join('')}</select>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-total" id="cartTotal">Total: $0.00</div>
+        <button class="checkout-btn" id="checkoutBtn" onclick="showCheckout()">Checkout</button>
+        
+        <div class="checkout-form" id="checkoutForm">
+            <h3>Enter Your Details</h3>
+            <div class="form-group">
+                <label>Name *</label>
+                <input type="text" id="customerName" placeholder="Your full name">
+            </div>
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" id="customerEmail" placeholder="your.email@example.com">
+            </div>
+            <button class="submit-order-btn" onclick="submitOrder()">Submit Order</button>
+            <button class="back-btn" onclick="hideCheckout()">Back to Cart</button>
         </div>
-        <div>Ice:
-          <select id="ice_${p.id}">${ICE_OPTIONS.map(s=>`<option>${s}</option>`).join('')}</select>
-        </div>
-        <div>Quantity:<input type="number" id="qty_${p.id}" value="1" min="1"></div>
-      </div>
-      <button onclick="addToCart('${p.id}')">Add to Cart</button>
-    `;
-    container.appendChild(card);
-  });
-}
+    </div>
 
-// ------------------- Cart -------------------
-function addToCart(pid){
-  const size = document.getElementById(`size_${pid}`).value;
-  const sugar = document.getElementById(`sugar_${pid}`).value;
-  const ice = document.getElementById(`ice_${pid}`).value;
-  const qty = parseInt(document.getElementById(`qty_${pid}`).value);
-  let cart = JSON.parse(localStorage.getItem("orderData")) || [];
-  cart.push({id:pid,name:PRODUCTS.find(p=>p.id===pid).title,size,sugar,ice,quantity:qty,price:PRODUCTS.find(p=>p.id===pid).price});
-  localStorage.setItem("orderData",JSON.stringify(cart));
-  alert("Added to cart!");
-}
+    <script>
+        var products = [
+            {id: 1, name: "Wireless Headphones", description: "Premium sound quality", price: 79.99, emoji: "🎧"},
+            {id: 2, name: "Smart Watch", description: "Track your fitness goals", price: 199.99, emoji: "⌚"},
+            {id: 3, name: "Laptop", description: "Powerful and portable", price: 999.99, emoji: "💻"},
+            {id: 4, name: "Camera", description: "Capture every moment", price: 449.99, emoji: "📷"},
+            {id: 5, name: "Smartphone", description: "Stay connected anywhere", price: 699.99, emoji: "📱"},
+            {id: 6, name: "Gaming Console", description: "Ultimate gaming experience", price: 399.99, emoji: "🎮"}
+        ];
 
-// ------------------- Show Checkout -------------------
-function showCheckout(){
-  document.getElementById("menu").style.display="none";
-  document.getElementById("view-cart").style.display="none";
-  document.getElementById("checkout").style.display="block";
-  displayOrderSummary();
-}
+        var cart = [];
 
-// ------------------- Back to Shop -------------------
-function backToShop(){
-  document.getElementById("menu").style.display="flex";
-  document.getElementById("view-cart").style.display="block";
-  document.getElementById("checkout").style.display="none";
-}
+        function init() {
+            var html = "";
+            for (var i = 0; i < products.length; i++) {
+                var p = products[i];
+                html += "<div class='product-card'>";
+                html += "<div class='product-emoji'>" + p.emoji + "</div>";
+                html += "<h3 class='product-title'>" + p.name + "</h3>";
+                html += "<p class='product-description'>" + p.description + "</p>";
+                html += "<div class='product-price'>$" + p.price.toFixed(2) + "</div>";
+                html += "<button class='add-to-cart-btn' onclick='addToCart(" + p.id + ")'>Add to Cart</button>";
+                html += "</div>";
+            }
+            document.getElementById("products").innerHTML = html;
+        }
 
-// ------------------- Display Order -------------------
-function displayOrderSummary(){
-  const orderData = JSON.parse(localStorage.getItem("orderData")) || [];
-  const container = document.getElementById("order-summary");
-  if(orderData.length===0){ container.innerHTML="<p>Your cart is empty.</p>"; return; }
-  let html="<ul>";
-  let total=0;
-  orderData.forEach(item=>{
-    const subtotal=item.price*item.quantity; total+=subtotal;
-    html+=`<li>${item.name} | ${item.size} | ${item.sugar} | ${item.ice} × ${item.quantity} = $${subtotal}</li>`;
-  });
-  html+=`</ul><p><b>Total: $${total}</b></p>`;
-  container.innerHTML=html;
-}
+        function addToCart(id) {
+            var product = null;
+            for (var i = 0; i < products.length; i++) {
+                if (products[i].id === id) {
+                    product = products[i];
+                    break;
+                }
+            }
+            
+            var found = false;
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    cart[i].quantity++;
+                    found = true;
+                    break;
+                }
+            }
+            
+            if (!found) {
+                cart.push({id: product.id, name: product.name, price: product.price, quantity: 1});
+            }
+            
+            updateCart();
+        }
 
-// ------------------- Send Email -------------------
-function sendOrderByEmail(){
-  const orderData=JSON.parse(localStorage.getItem("orderData")) || [];
-  if(orderData.length===0){ alert("Your cart is empty."); return; }
-  const name = document.getElementById("customer-name").value.trim();
-  const phone = document.getElementById("customer-phone").value.trim();
-  if(!name||!phone){ alert("Please enter your name and phone number."); return; }
-  let emailBody="Hello,%0D%0A%0D%0AI would like to place the following drink order:%0D%0A%0D%0A";
-  let total=0;
-  orderData.forEach(item=>{
-    const subtotal=item.price*item.quantity; total+=subtotal;
-    emailBody+=`- ${item.name} | ${item.size} | ${item.sugar} | ${item.ice} × ${item.quantity} = $${subtotal}%0D%0A`;
-  });
-  emailBody+=`%0D%0ATotal: $${total}%0D%0A%0D%0ACustomer Name: ${name}%0D%0ACustomer Phone: ${phone}%0D%0A%0D%0AThank you!`;
-  window.location.href=`mailto:samanthachu1223@gmail.com?subject=Drink Order&body=${emailBody}`;
-}
+        function removeFromCart(id) {
+            var newCart = [];
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id !== id) {
+                    newCart.push(cart[i]);
+                }
+            }
+            cart = newCart;
+            updateCart();
+        }
 
-// ------------------- Event Listeners -------------------
-document.getElementById("view-cart").addEventListener("click",showCheckout);
-document.getElementById("back-to-shop").addEventListener("click",backToShop);
-document.getElementById("email-order").addEventListener("click",sendOrderByEmail);
+        function updateCart() {
+            var total = 0;
+            var count = 0;
+            
+            for (var i = 0; i < cart.length; i++) {
+                total += cart[i].price * cart[i].quantity;
+                count += cart[i].quantity;
+            }
+            
+            document.getElementById("cartCount").textContent = count;
+            document.getElementById("cartTotal").textContent = "Total: $" + total.toFixed(2);
+            
+            if (cart.length === 0) {
+                document.getElementById("cartItems").innerHTML = "<div class='empty-cart'>Your cart is empty</div>";
+            } else {
+                var html = "";
+                for (var i = 0; i < cart.length; i++) {
+                    var item = cart[i];
+                    html += "<div class='cart-item'>";
+                    html += "<div><strong>" + item.name + "</strong><br>$" + item.price.toFixed(2) + " × " + item.quantity + "</div>";
+                    html += "<button class='remove-item' onclick='removeFromCart(" + item.id + ")'>Remove</button>";
+                    html += "</div>";
+                }
+                document.getElementById("cartItems").innerHTML = html;
+            }
+        }
 
-// ------------------- Initialize -------------------
-renderMenu();
-</script>
+        function toggleCart() {
+            var sidebar = document.getElementById("cartSidebar");
+            sidebar.classList.toggle("active");
+            hideCheckout();
+        }
+
+        function showCheckout() {
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+            document.getElementById("checkoutBtn").style.display = "none";
+            document.getElementById("cartItems").style.display = "none";
+            document.getElementById("cartTotal").style.display = "none";
+            document.getElementById("checkoutForm").classList.add("active");
+        }
+
+        function hideCheckout() {
+            document.getElementById("checkoutBtn").style.display = "block";
+            document.getElementById("cartItems").style.display = "block";
+            document.getElementById("cartTotal").style.display = "block";
+            document.getElementById("checkoutForm").classList.remove("active");
+        }
+
+        function submitOrder() {
+            var name = document.getElementById("customerName").value.trim();
+            var email = document.getElementById("customerEmail").value.trim();
+
+            if (!name || !email) {
+                alert("Please fill in all fields!");
+                return;
+            }
+
+            var total = 0;
+            var orderText = "";
+            for (var i = 0; i < cart.length; i++) {
+                var item = cart[i];
+                total += item.price * item.quantity;
+                orderText += item.name + " - $" + item.price.toFixed(2) + " x " + item.quantity + " = $" + (item.price * item.quantity).toFixed(2) + "\n";
+            }
+
+            var subject = encodeURIComponent("New Order from Online Store");
+            var body = encodeURIComponent("New Order Received!\n\nCustomer: " + name + "\nEmail: " + email + "\n\nOrder:\n" + orderText + "\nTotal: $" + total.toFixed(2));
+            
+            window.location.href = "mailto:samanthachu1223@gmail.com?subject=" + subject + "&body=" + body;
+
+            setTimeout(function() {
+                alert("Thank you! Your order has been submitted.");
+                cart = [];
+                updateCart();
+                hideCheckout();
+                toggleCart();
+                document.getElementById("customerName").value = "";
+                document.getElementById("customerEmail").value = "";
+            }, 500);
+        }
+
+        init();
+    </script>
 </body>
 </html>
