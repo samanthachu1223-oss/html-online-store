@@ -259,6 +259,7 @@
                 <input type="hidden" name="_subject" value="New Order from Online Store">
                 <input type="hidden" name="_captcha" value="false">
                 <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_next" value="https://samanthachu1223-oss.github.io/html-online-store/">
                 
                 <div class="form-group">
                     <label>Name *</label>
@@ -271,7 +272,7 @@
                 <input type="hidden" name="order" id="orderDetails">
                 <input type="hidden" name="total" id="orderTotal">
                 
-                <button type="submit" class="submit-order-btn">Submit Order</button>
+                <button type="submit" class="submit-order-btn" onclick="return confirmSubmit()">Submit Order</button>
                 <button type="button" class="back-btn" onclick="hideCheckout()">Back to Cart</button>
             </form>
         </div>
