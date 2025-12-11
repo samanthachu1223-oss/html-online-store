@@ -62,6 +62,22 @@
             gap: 30px;
             padding: 40px;
         }
+        .category-section {
+            padding: 40px;
+        }
+        .category-title {
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        .category-products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
         .product-card {
             background: white;
             border-radius: 15px;
@@ -269,12 +285,13 @@
     </div>
 
     <script>
-       var products = [
-    {id: 1, name: "Twix Minis", description: "Delicious chocolate caramel biscuit", price: 10, emoji: "🍫"},
-    {id: 2, name: "Want Want Senbei", description: "Classic rice crackers", price: 10, emoji: "🍘"},
-    {id: 3, name: "North Sea Codfish Snack", description: "Thin, Medium size", price: 60, emoji: "🐟"},
-    {id: 4, name: "Garlic Green Peas", description: "Crunchy garlic flavoured peas", price: 15, emoji: "🫛"}
-    ];
+        var products = [
+            {id: 1, name: "Twix Minis", description: "Delicious chocolate caramel biscuit", price: 10, emoji: "🍫"},
+            {id: 2, name: "Want Want Senbei", description: "Classic rice crackers", price: 10, emoji: "🍘"},
+            {id: 3, name: "North Sea Codfish Snack (Thin)", description: "Thin cut codfish flavoured snack", price: 60, emoji: "🐟"},
+            {id: 4, name: "North Sea Codfish Snack (Medium)", description: "Medium size codfish flavoured snack", price: 60, emoji: "🐟"},
+            {id: 5, name: "Garlic Green Peas", description: "Crunchy garlic flavoured peas", price: 15, emoji: "🫛"}
+        ];
 
         var cart = [];
 
@@ -286,7 +303,7 @@
                 html += "<div class='product-emoji'>" + p.emoji + "</div>";
                 html += "<h3 class='product-title'>" + p.name + "</h3>";
                 html += "<p class='product-description'>" + p.description + "</p>";
-                html += "<div class='product-price'>$" + p.price.toFixed(2) + "</div>";
+                html += "<div class='product-price'>NT$ " + p.price.toFixed(0) + "</div>";
                 html += "<button class='add-to-cart-btn' onclick='addToCart(" + p.id + ")'>Add to Cart</button>";
                 html += "</div>";
             }
@@ -339,7 +356,7 @@
             }
             
             document.getElementById("cartCount").textContent = count;
-            document.getElementById("cartTotal").textContent = "Total: $" + total.toFixed(2);
+            document.getElementById("cartTotal").textContent = "Total: NT$ " + total.toFixed(0);
             
             if (cart.length === 0) {
                 document.getElementById("cartItems").innerHTML = "<div class='empty-cart'>Your cart is empty</div>";
@@ -350,7 +367,7 @@
                     html += "<div class='cart-item'>";
                     html += "<div class='cart-item-info'>";
                     html += "<div><strong>" + item.name + "</strong></div>";
-                    html += "<div>$" + item.price.toFixed(2) + " each</div>";
+                    html += "<div>NT$ " + item.price.toFixed(0) + " each</div>";
                     html += "<div class='quantity-controls'>";
                     html += "<button class='quantity-btn' onclick='decreaseQuantity(" + item.id + ")'>-</button>";
                     html += "<span class='quantity-display'>" + item.quantity + "</span>";
@@ -424,6 +441,68 @@
             document.getElementById("cartItems").style.display = "block";
             document.getElementById("cartTotal").style.display = "block";
             document.getElementById("checkoutForm").classList.remove("active");
+        }
+
+        function submitOrderNow() {
+            var name = document.getElementById("customerName").value.trim();
+            var email = document.getElementById("customerEmail").value.trim();
+
+            if (!name || !email) {
+                alert("Please fill in all fields!");
+                return;
+            }
+
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert("Please enter a valid email address!");
+                return;
+            }
+
+            var total = 0;
+            var orderText = "";
+            for (var i = 0; i < cart.length; i++) {
+                var item = cart[i];
+                total += item.price * item.quantity;
+                orderText += item.name + " - NT$ " + item.price.toFixed(0) + " x " + item.quantity + " = NT$ " + (item.price * item.quantity).toFixed(0) + "\n";
+            }
+
+            // Create a hidden form and submit it
+            var form = document.createElement("form");
+            form.method = "POST";
+            form.action = "https://formsubmit.co/samanthachu1223@gmail.com";
+            form.target = "_blank";
+
+            var fields = {
+                "_subject": "New Order from Online Store",
+                "_captcha": "false",
+                "_template": "table",
+                "name": name,
+                "email": email,
+                "order": orderText,
+                "total": "NT$ " + total.toFixed(0)
+            };
+
+            for (var key in fields) {
+                var input = document.createElement("input");
+                input.type = "hidden";
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+
+            // Show success message and clear cart
+            alert("Thank you " + name + "! Your order has been submitted.\n\nOrder Total: NT$ " + total.toFixed(0) + "\n\nWe will contact you at " + email + " shortly!");
+            
+            cart = [];
+            updateCart();
+            hideCheckout();
+            toggleCart();
+            document.getElementById("customerName").value = "";
+            document.getElementById("customerEmail").value = "";
         }
 
         function submitOrder() {
