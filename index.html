@@ -33,14 +33,15 @@
     .cart-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
     .close-cart { cursor: pointer; font-size: 1.5em; }
     .cart-items { padding: 20px; }
-    .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #ecf0f1; }
-    .cart-item-info { flex: 1; display: flex; align-items: center; }
-    .cart-item-info img { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 10px; vertical-align: middle; }
-    .cart-item-info .product-emoji { font-size: 2em; margin-right: 10px; }
+    .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #ecf0f1; }
+    .cart-item-info { flex: 1; display: flex; align-items: center; gap: 10px; }
+    .cart-item-info img { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; background: white; }
+    .cart-item-info .product-emoji { font-size: 2em; }
+    .cart-item-info > div { display: flex; flex-direction: column; gap: 4px; }
     .quantity-controls { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
     .quantity-btn { background: #667eea; color: white; border: none; width: 30px; height: 30px; border-radius: 5px; cursor: pointer; font-size: 1.2em; }
     .quantity-display { min-width: 30px; text-align: center; font-weight: bold; }
-    .remove-item { background: #ff4757; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+    .remove-item { background: #ff4757; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; height: fit-content; }
     .cart-total { padding: 20px; border-top: 2px solid #667eea; font-size: 1.5em; font-weight: bold; }
     .checkout-btn { width: calc(100% - 40px); margin: 20px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 1.2em; cursor: pointer; }
     .checkout-form { padding: 20px; display: none; }
@@ -101,7 +102,7 @@ var products=[
 {id:8,name:"Band-Aid (Regular)",description:"Standard bandages",price:10,emoji:"🩹",category:"daily"},
 {id:9,name:"Small Band-Aid (Waterproof)",description:"For wounds under 1cm - Waterproof",price:5,emoji:"🩹",category:"daily"},
 {id:10,name:"Small Band-Aid (Hypoallergenic)",description:"For wounds under 1cm - Skin-tone, low sensitivity",price:5,emoji:"🩹",category:"daily"},
-{id:11,name:"Pocket Tissues",description:"Portable tissue pack",price:8,emoji:"📄",category:"daily"}
+{id:11,name:"Pocket Tissues",description:"Portable tissue pack",price:10,emoji:"📄",category:"daily"}
 ];
 var categories={"snacks":"🍿 Snacks","daily":"🏠 Daily Essentials"};
 var cart=[],currentCategory="snacks";
@@ -111,7 +112,7 @@ function switchCategory(cat){currentCategory=cat;renderCategoryTabs();renderProd
 function renderProducts(cat){var html="<div class='category-section'><h2 class='category-title'>"+categories[cat]+"</h2><div class='category-products'>";for(var i=0;i<products.length;i++){var p=products[i];if(p.category===cat){html+="<div class='product-card'>";if(p.img) html+="<img class='product-img' src='"+p.img+"' alt='"+p.name+"'>";else html+="<div class='product-emoji'>"+p.emoji+"</div>";html+="<h3 class='product-title'>"+p.name+"</h3><p class='product-description'>"+p.description+"</p><div class='product-price'>NT$ "+p.price+"</div><button class='add-to-cart-btn' onclick='addToCart("+p.id+")'>Add to Cart</button></div>";}}html+="</div></div>";document.getElementById("products").innerHTML=html;}
 function addToCart(id){var product=products.find(p=>p.id===id);var item=cart.find(c=>c.id===id);if(item)item.quantity++;else cart.push({id:product.id,name:product.name,price:product.price,img:product.img,emoji:product.emoji,quantity:1});updateCart();}
 function removeFromCart(id){cart=cart.filter(c=>c.id!==id);updateCart();}
-function updateCart(){var total=0,count=0;for(var i=0;i<cart.length;i++){total+=cart[i].price*cart[i].quantity;count+=cart[i].quantity;}document.getElementById("cartCount").textContent=count;document.getElementById("cartTotal").textContent="Total: NT$ "+total;var html="";if(cart.length===0){html="<div class='empty-cart'>Your cart is empty</div>";}else{for(var i=0;i<cart.length;i++){var item=cart[i];html+="<div class='cart-item'><div class='cart-item-info'>";if(item.img) html+="<img src='"+item.img+"' alt='"+item.name+"'>";else html+="<span class='product-emoji'>"+item.emoji+"</span>";html+="<strong>"+item.name+"</strong><div>NT$ "+item.price+" each</div><div class='quantity-controls'><button class='quantity-btn' onclick='decreaseQuantity("+item.id+")'>-</button><span class='quantity-display'>"+item.quantity+"</span><button class='quantity-btn' onclick='increaseQuantity("+item.id+")'>+</button></div></div><button class='remove-item' onclick='removeFromCart("+item.id+")'>Remove All</button></div>";}}document.getElementById("cartItems").innerHTML=html;}
+function updateCart(){var total=0,count=0;for(var i=0;i<cart.length;i++){total+=cart[i].price*cart[i].quantity;count+=cart[i].quantity;}document.getElementById("cartCount").textContent=count;document.getElementById("cartTotal").textContent="Total: NT$ "+total;var html="";if(cart.length===0){html="<div class='empty-cart'>Your cart is empty</div>";}else{for(var i=0;i<cart.length;i++){var item=cart[i];html+="<div class='cart-item'><div class='cart-item-info'>";if(item.img) html+="<img src='"+item.img+"' alt='"+item.name+"'>";else html+="<span class='product-emoji'>"+item.emoji+"</span>";html+="<div><strong>"+item.name+"</strong><div>NT$ "+item.price+" each</div><div class='quantity-controls'><button class='quantity-btn' onclick='decreaseQuantity("+item.id+")'>-</button><span class='quantity-display'>"+item.quantity+"</span><button class='quantity-btn' onclick='increaseQuantity("+item.id+")'>+</button></div></div></div><button class='remove-item' onclick='removeFromCart("+item.id+")'>Remove All</button></div>";}}document.getElementById("cartItems").innerHTML=html;}
 function increaseQuantity(id){var item=cart.find(c=>c.id===id);if(item)item.quantity++;updateCart();}
 function decreaseQuantity(id){var item=cart.find(c=>c.id===id);if(item){if(item.quantity>1)item.quantity--;else removeFromCart(id);}updateCart();}
 function toggleCart(){document.getElementById("cartSidebar").classList.toggle("active");hideCheckout();}
