@@ -34,6 +34,35 @@
             font-size: 2.5em;
             margin-bottom: 10px;
         }
+        .category-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            flex-wrap: wrap;
+        }
+        .category-tab {
+            padding: 12px 30px;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            color: #667eea;
+            font-weight: bold;
+        }
+        .category-tab:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .category-tab.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
         .cart-icon {
             cursor: pointer;
             font-size: 1.5em;
@@ -55,12 +84,6 @@
             justify-content: center;
             font-size: 0.7em;
             font-weight: bold;
-        }
-        .products {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
-            padding: 40px;
         }
         .category-section {
             padding: 40px;
@@ -101,6 +124,7 @@
         .product-description {
             color: #7f8c8d;
             margin-bottom: 15px;
+            font-size: 0.9em;
         }
         .product-price {
             font-size: 1.5em;
@@ -116,6 +140,10 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 1em;
+        }
+        .add-to-cart-btn:hover {
+            opacity: 0.9;
         }
         .cart-sidebar {
             position: fixed;
@@ -257,7 +285,8 @@
                 <span class="cart-count" id="cartCount">0</span>
             </div>
         </header>
-        <div class="products" id="products"></div>
+        <div class="category-tabs" id="categoryTabs"></div>
+        <div id="products"></div>
     </div>
 
     <div class="cart-sidebar" id="cartSidebar">
@@ -266,7 +295,7 @@
             <span class="close-cart" onclick="toggleCart()">✕</span>
         </div>
         <div class="cart-items" id="cartItems"></div>
-        <div class="cart-total" id="cartTotal">Total: $0.00</div>
+        <div class="cart-total" id="cartTotal">Total: NT$ 0</div>
         <button class="checkout-btn" id="checkoutBtn" onclick="showCheckout()">Checkout</button>
         
         <div class="checkout-form" id="checkoutForm">
@@ -286,27 +315,70 @@
 
     <script>
         var products = [
-            {id: 1, name: "Twix Minis", description: "Delicious chocolate caramel biscuit", price: 10, emoji: "🍫"},
-            {id: 2, name: "Want Want Senbei", description: "Classic rice crackers", price: 10, emoji: "🍘"},
-            {id: 3, name: "North Sea Codfish Snack (Thin)", description: "Thin cut codfish flavoured snack", price: 60, emoji: "🐟"},
-            {id: 4, name: "North Sea Codfish Snack (Medium)", description: "Medium size codfish flavoured snack", price: 60, emoji: "🐟"},
-            {id: 5, name: "Garlic Green Peas", description: "Crunchy garlic flavoured peas", price: 15, emoji: "🫛"}
+            // 零食區
+            {id: 1, name: "Twix Minis", description: "Delicious chocolate caramel biscuit", price: 10, emoji: "🍫", category: "snacks"},
+            {id: 2, name: "Want Want Senbei", description: "Classic rice crackers", price: 10, emoji: "🍘", category: "snacks"},
+            {id: 3, name: "North Sea Codfish Snack", description: "Shredded codfish snack (Thin/Medium size available)", price: 60, emoji: "🐟", category: "snacks"},
+            {id: 4, name: "Garlic Green Peas", description: "Crunchy garlic flavoured peas", price: 15, emoji: "🫛", category: "snacks"},
+            // 日常用品區
+            {id: 5, name: "Wet Wipes", description: "Convenient cleaning wipes", price: 35, emoji: "🧻", category: "daily"},
+            {id: 6, name: "Alcohol Wipes", description: "Disinfecting alcohol wipes", price: 60, emoji: "🧼", category: "daily"},
+            {id: 7, name: "Band-Aid (Waterproof)", description: "Waterproof bandages", price: 15, emoji: "🩹", category: "daily"},
+            {id: 8, name: "Band-Aid (Regular)", description: "Standard bandages", price: 10, emoji: "🩹", category: "daily"},
+            {id: 9, name: "Small Band-Aid (Waterproof)", description: "For wounds under 1cm - Waterproof", price: 5, emoji: "🩹", category: "daily"},
+            {id: 10, name: "Small Band-Aid (Hypoallergenic)", description: "For wounds under 1cm - Skin-tone, low sensitivity", price: 5, emoji: "🩹", category: "daily"},
+            {id: 11, name: "Pocket Tissues", description: "Portable tissue pack", price: 8, emoji: "📄", category: "daily"}
         ];
 
+        var categories = {
+            "snacks": "🍿 Snacks",
+            "daily": "🏠 Daily Essentials"
+        };
+
         var cart = [];
+        var currentCategory = "snacks";
 
         function init() {
+            renderCategoryTabs();
+            renderProducts(currentCategory);
+        }
+
+        function renderCategoryTabs() {
             var html = "";
-            for (var i = 0; i < products.length; i++) {
-                var p = products[i];
-                html += "<div class='product-card'>";
-                html += "<div class='product-emoji'>" + p.emoji + "</div>";
-                html += "<h3 class='product-title'>" + p.name + "</h3>";
-                html += "<p class='product-description'>" + p.description + "</p>";
-                html += "<div class='product-price'>NT$ " + p.price.toFixed(0) + "</div>";
-                html += "<button class='add-to-cart-btn' onclick='addToCart(" + p.id + ")'>Add to Cart</button>";
+            for (var cat in categories) {
+                var activeClass = (cat === currentCategory) ? "active" : "";
+                html += "<div class='category-tab " + activeClass + "' onclick='switchCategory(\"" + cat + "\")'>";
+                html += categories[cat];
                 html += "</div>";
             }
+            document.getElementById("categoryTabs").innerHTML = html;
+        }
+
+        function switchCategory(cat) {
+            currentCategory = cat;
+            renderCategoryTabs();
+            renderProducts(cat);
+        }
+
+        function renderProducts(cat) {
+            var html = "<div class='category-section'>";
+            html += "<h2 class='category-title'>" + categories[cat] + "</h2>";
+            html += "<div class='category-products'>";
+            
+            for (var i = 0; i < products.length; i++) {
+                var p = products[i];
+                if (p.category === cat) {
+                    html += "<div class='product-card'>";
+                    html += "<div class='product-emoji'>" + p.emoji + "</div>";
+                    html += "<h3 class='product-title'>" + p.name + "</h3>";
+                    html += "<p class='product-description'>" + p.description + "</p>";
+                    html += "<div class='product-price'>NT$ " + p.price + "</div>";
+                    html += "<button class='add-to-cart-btn' onclick='addToCart(" + p.id + ")'>Add to Cart</button>";
+                    html += "</div>";
+                }
+            }
+            
+            html += "</div></div>";
             document.getElementById("products").innerHTML = html;
         }
 
@@ -356,7 +428,7 @@
             }
             
             document.getElementById("cartCount").textContent = count;
-            document.getElementById("cartTotal").textContent = "Total: NT$ " + total.toFixed(0);
+            document.getElementById("cartTotal").textContent = "Total: NT$ " + total;
             
             if (cart.length === 0) {
                 document.getElementById("cartItems").innerHTML = "<div class='empty-cart'>Your cart is empty</div>";
@@ -367,7 +439,7 @@
                     html += "<div class='cart-item'>";
                     html += "<div class='cart-item-info'>";
                     html += "<div><strong>" + item.name + "</strong></div>";
-                    html += "<div>NT$ " + item.price.toFixed(0) + " each</div>";
+                    html += "<div>NT$ " + item.price + " each</div>";
                     html += "<div class='quantity-controls'>";
                     html += "<button class='quantity-btn' onclick='decreaseQuantity(" + item.id + ")'>-</button>";
                     html += "<span class='quantity-display'>" + item.quantity + "</span>";
@@ -397,7 +469,6 @@
                     if (cart[i].quantity > 1) {
                         cart[i].quantity--;
                     } else {
-                        // If quantity is 1, remove the item
                         cart.splice(i, 1);
                     }
                     break;
@@ -417,18 +488,6 @@
                 alert("Your cart is empty!");
                 return;
             }
-            
-            // Prepare order details
-            var total = 0;
-            var orderText = "";
-            for (var i = 0; i < cart.length; i++) {
-                var item = cart[i];
-                total += item.price * item.quantity;
-                orderText += item.name + " - $" + item.price.toFixed(2) + " x " + item.quantity + " = $" + (item.price * item.quantity).toFixed(2) + "; ";
-            }
-            
-            document.getElementById("orderDetails").value = orderText;
-            document.getElementById("orderTotal").value = "$" + total.toFixed(2);
             
             document.getElementById("checkoutBtn").style.display = "none";
             document.getElementById("cartItems").style.display = "none";
@@ -463,10 +522,9 @@
             for (var i = 0; i < cart.length; i++) {
                 var item = cart[i];
                 total += item.price * item.quantity;
-                orderText += item.name + " - NT$ " + item.price.toFixed(0) + " x " + item.quantity + " = NT$ " + (item.price * item.quantity).toFixed(0) + "\n";
+                orderText += item.name + " - NT$ " + item.price + " x " + item.quantity + " = NT$ " + (item.price * item.quantity) + "\n";
             }
 
-            // Create a hidden form and submit it
             var form = document.createElement("form");
             form.method = "POST";
             form.action = "https://formsubmit.co/samanthachu1223@gmail.com";
@@ -479,7 +537,7 @@
                 "name": name,
                 "email": email,
                 "order": orderText,
-                "total": "NT$ " + total.toFixed(0)
+                "total": "NT$ " + total
             };
 
             for (var key in fields) {
@@ -494,8 +552,7 @@
             form.submit();
             document.body.removeChild(form);
 
-            // Show success message and clear cart
-            alert("Thank you " + name + "! Your order has been submitted.\n\nOrder Total: NT$ " + total.toFixed(0) + "\n\nWe will contact you at " + email + " shortly!");
+            alert("Thank you " + name + "! Your order has been submitted.\n\nOrder Total: NT$ " + total + "\n\nWe will contact you at " + email + " shortly!");
             
             cart = [];
             updateCart();
@@ -503,39 +560,6 @@
             toggleCart();
             document.getElementById("customerName").value = "";
             document.getElementById("customerEmail").value = "";
-        }
-
-        function submitOrder() {
-            var name = document.getElementById("customerName").value.trim();
-            var email = document.getElementById("customerEmail").value.trim();
-
-            if (!name || !email) {
-                alert("Please fill in all fields!");
-                return;
-            }
-
-            var total = 0;
-            var orderText = "";
-            for (var i = 0; i < cart.length; i++) {
-                var item = cart[i];
-                total += item.price * item.quantity;
-                orderText += item.name + " - $" + item.price.toFixed(2) + " x " + item.quantity + " = $" + (item.price * item.quantity).toFixed(2) + "\n";
-            }
-
-            var subject = encodeURIComponent("New Order from Online Store");
-            var body = encodeURIComponent("New Order Received!\n\nCustomer: " + name + "\nEmail: " + email + "\n\nOrder:\n" + orderText + "\nTotal: $" + total.toFixed(2));
-            
-            window.location.href = "mailto:samanthachu1223@gmail.com?subject=" + subject + "&body=" + body;
-
-            setTimeout(function() {
-                alert("Thank you! Your order has been submitted.");
-                cart = [];
-                updateCart();
-                hideCheckout();
-                toggleCart();
-                document.getElementById("customerName").value = "";
-                document.getElementById("customerEmail").value = "";
-            }, 500);
         }
 
         init();
