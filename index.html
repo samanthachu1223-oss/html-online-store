@@ -1,338 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Online Store</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-    header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 30px;
-      text-align: center;
-      border-radius: 20px 20px 0 0;
-    }
-    h1 { font-size: 2.5em; margin-bottom: 10px; }
-    .cart-icon {
-      cursor: pointer;
-      font-size: 1.5em;
-      display: inline-block;
-      position: relative;
-      margin-left: 20px;
-    }
-    .cart-count {
-      position: absolute;
-      top: -10px; right: -10px;
-      background: #ff4757; color: white;
-      border-radius: 50%;
-      width: 25px; height: 25px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.7em; font-weight: bold;
-    }
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 30px;
-      padding: 40px;
-    }
-    .product-card {
-      background: white;
-      border-radius: 15px;
-      padding: 20px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      transition: transform 0.3s;
-    }
-    .product-card:hover { transform: translateY(-10px); }
-    .product-img {
-      width: 100%;
-      height: 180px;
-      object-fit: contain;
-      border-radius: 10px;
-      margin-bottom: 15px;
-    }
-    .product-title { font-size: 1.3em; margin-bottom: 10px; color: #2c3e50; }
-    .product-description {
-      color: #7f8c8d; margin-bottom: 15px; font-size: 0.9em;
-    }
-    .product-price {
-      font-size: 1.5em; color: #667eea; font-weight: bold;
-      margin-bottom: 15px;
-    }
-    .add-to-cart-btn {
-      width: 100%; padding: 12px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white; border: none; border-radius: 8px;
-      cursor: pointer; font-size: 1em;
-    }
-    .add-to-cart-btn:hover { opacity: 0.9; }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Store</title>
 
-    .cart-sidebar {
-      position: fixed; right: -400px; top: 0;
-      width: 400px; height: 100vh;
-      background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.2);
-      transition: right 0.3s; z-index: 1000; overflow-y: auto;
-    }
-    .cart-sidebar.active { right: 0; }
-    .cart-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white; padding: 20px;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .close-cart { cursor: pointer; font-size: 1.5em; }
-
-    .cart-items { padding: 20px; }
-    .cart-item {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 15px; border-bottom: 1px solid #ecf0f1;
-    }
-    .cart-item-info { flex: 1; }
-    .quantity-controls {
-      display: flex; align-items: center; gap: 10px; margin-top: 5px;
-    }
-    .quantity-btn {
-      background: #667eea; color: white;
-      border: none; width: 30px; height: 30px;
-      border-radius: 5px; cursor: pointer; font-size: 1.2em;
-    }
-    .quantity-display {
-      min-width: 30px; text-align: center; font-weight: bold;
-    }
-    .remove-item {
-      background: #ff4757; color: white;
-      border: none; padding: 5px 10px; border-radius: 5px;
-      cursor: pointer;
-    }
-    .cart-total {
-      padding: 20px; border-top: 2px solid #667eea;
-      font-size: 1.5em; font-weight: bold;
-    }
-    .checkout-btn {
-      width: calc(100% - 40px); margin: 20px;
-      padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white; border: none; border-radius: 8px;
-      font-size: 1.2em; cursor: pointer;
-    }
-    .checkout-form {
-      padding: 20px; display: none;
-    }
-    .checkout-form.active { display: block; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label {
-      display: block; margin-bottom: 5px; font-weight: bold;
-    }
-    .form-group input {
-      width: 100%; padding: 10px;
-      border: 2px solid #ecf0f1; border-radius: 8px;
-    }
-    .submit-order-btn, .back-btn {
-      width: 100%; padding: 15px; border: none;
-      border-radius: 8px; cursor: pointer; margin-top: 10px;
-    }
-    .submit-order-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
-    .back-btn { background: #95a5a6; color: white; }
-    .empty-cart { text-align: center; padding: 40px; color: #7f8c8d; }
-  </style>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+        }
+        h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .cart-icon { cursor: pointer; font-size: 1.5em; display: inline-block; position: relative; margin-left: 20px; }
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 40px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .product-img {
+            width: 100%;
+            border-radius: 10px;
+            height: 200px;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+        .product-title { font-size: 1.3em; margin-bottom: 10px; color: #2c3e50; }
+        .product-description { color: #7f8c8d; margin-bottom: 15px; }
+        .product-price { font-size: 1.5em; color: #667eea; font-weight: bold; margin-bottom: 15px; }
+        .add-to-cart-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="container">
+<div class="container">
     <header>
-      <h1>🛍️ Online Store</h1>
-      <p>Shop our amazing products!</p>
-      <div class="cart-icon" onclick="toggleCart()">
-        🛒 <span class="cart-count" id="cartCount">0</span>
-      </div>
+        <h1>🛍️ Online Store</h1>
+        <p>Shop our amazing products!</p>
+        <div class="cart-icon" onclick="toggleCart()">🛒<span class="cart-count" id="cartCount">0</span></div>
     </header>
+
     <div class="products" id="products"></div>
-  </div>
+</div>
 
-  <div class="cart-sidebar" id="cartSidebar">
-    <div class="cart-header">
-      <h2>Shopping Cart</h2>
-      <span class="close-cart" onclick="toggleCart()">✕</span>
-    </div>
-    <div class="cart-items" id="cartItems"></div>
-    <div class="cart-total" id="cartTotal">Total: NT$ 0</div>
-    <button class="checkout-btn" id="checkoutBtn" onclick="showCheckout()">Checkout</button>
-    <div class="checkout-form" id="checkoutForm">
-      <h3>Enter Your Details</h3>
-      <div class="form-group">
-        <label>Name *</label>
-        <input type="text" id="customerName" placeholder="Your full name" required>
-      </div>
-      <div class="form-group">
-        <label>Email *</label>
-        <input type="email" id="customerEmail" placeholder="your.email@example.com" required>
-      </div>
-      <button class="submit-order-btn" onclick="submitOrderNow()">Submit Order</button>
-      <button class="back-btn" onclick="hideCheckout()">Back to Cart</button>
-    </div>
-  </div>
+<script>
+// PRODUCT LIST — All images integrated with URL
 
-  <script>
-    var products = [
-      { id: 1, name: "Twix Minis", description: "Delicious chocolate caramel biscuit", price: 10, image: "https://i.postimg.cc/7ZTXKQP4/twix-minis.jpg" },
-      { id: 2, name: "Want Want Senbei", description: "Classic rice crackers", price: 10, image: "https://i.postimg.cc/DwxkqhL3/wantwant-senbei.jpg" },
-      { id: 3, name: "North Sea Codfish Snack", description: "Thin & Medium size codfish flavored snack", price: 60, image: "https://img.pchome.com.tw/cs/items/DBACHS1900GP05V/000001_1742180781.jpg" },
-      { id: 4, name: "Garlic Green Peas", description: "Crunchy garlic flavoured peas", price: 15, image: "https://i.postimg.cc/nL7pRfyg/garlic-peas.jpg" }
-    ];
-
-    var cart = [];
-
-    function init() {
-      renderProducts();
+var products = [
+    {
+        id: 1,
+        name: "Twix Minis",
+        description: "Delicious chocolate caramel biscuit",
+        price: 10,
+        img: "https://gcs.rimg.com.tw/g1/6/bc/37/22228757099575_395.jpg"
+    },
+    {
+        id: 2,
+        name: "Want Want Senbei",
+        description: "Classic rice crackers",
+        price: 10,
+        img: "https://www.91zjdl.com/file/upload/202503/18/110711811.jpg.middle.jpg"
+    },
+    {
+        id: 3,
+        name: "North Sea Codfish Snack",
+        description: "Thin, Medium size",
+        price: 60,
+        img: "https://img.pchome.com.tw/cs/items/DBACHS1900GP05V/000001_1742180781.jpg"
+    },
+    {
+        id: 4,
+        name: "Garlic Green Peas",
+        description: "Garlic flavored peas",
+        price: 15,
+        img: "https://www.costco.com.tw/medias/sys_master/images/ha0/h0c/65765251907614.jpg"
     }
+];
 
-    function renderProducts() {
-      var html = "";
-      for (var i = 0; i < products.length; i++) {
+var cart = [];
+
+function init() {
+    var html = "";
+    for (var i = 0; i < products.length; i++) {
         var p = products[i];
         html += "<div class='product-card'>";
-        html += "<img class='product-img' src='" + p.image + "' alt='" + p.name + "'>";
+        html += "<img class='product-img' src='" + p.img + "' alt='product image'>";
         html += "<h3 class='product-title'>" + p.name + "</h3>";
         html += "<p class='product-description'>" + p.description + "</p>";
-        html += "<div class='product-price'>NT$ " + p.price + "</div>";
+        html += "<div class='product-price'>NT$ " + p.price.toFixed(0) + "</div>";
         html += "<button class='add-to-cart-btn' onclick='addToCart(" + p.id + ")'>Add to Cart</button>";
         html += "</div>";
-      }
-      document.getElementById("products").innerHTML = html;
     }
+    document.getElementById("products").innerHTML = html;
+}
 
-    function addToCart(id) {
-      var product = products.find(p => p.id === id);
-      if (!product) return;
+function addToCart(id) {
+    var p = products.find(x => x.id === id);
+    var item = cart.find(x => x.id === id);
 
-      var found = cart.find(item => item.id === id);
-      if (found) {
-        found.quantity++;
-      } else {
-        cart.push({ id: product.id, name: product.name, price: product.price, quantity: 1 });
-      }
-      updateCart();
-    }
+    if (item) item.quantity++;
+    else cart.push({id: p.id, name: p.name, price: p.price, quantity: 1});
 
-    function removeFromCart(id) {
-      cart = cart.filter(item => item.id !== id);
-      updateCart();
-    }
+    updateCart();
+}
 
-    function updateCart() {
-      var total = 0;
-      var count = 0;
-      for (var item of cart) {
-        total += item.price * item.quantity;
-        count += item.quantity;
-      }
-      document.getElementById("cartCount").textContent = count;
-      document.getElementById("cartTotal").textContent = "Total: NT$ " + total;
+function updateCart() {
+    document.getElementById("cartCount").innerText =
+        cart.reduce((sum, item) => sum + item.quantity, 0);
+}
 
-      if (cart.length === 0) {
-        document.getElementById("cartItems").innerHTML = "<div class='empty-cart'>Your cart is empty</div>";
-      } else {
-        var html = "";
-        for (var item of cart) {
-          html += "<div class='cart-item'>";
-          html += "<div class='cart-item-info'>";
-          html += "<div><strong>" + item.name + "</strong></div>";
-          html += "<div>NT$ " + item.price + " each</div>";
-          html += "<div class='quantity-controls'>";
-          html += "<button class='quantity-btn' onclick='decreaseQuantity(" + item.id + ")'>-</button>";
-          html += "<span class='quantity-display'>" + item.quantity + "</span>";
-          html += "<button class='quantity-btn' onclick='increaseQuantity(" + item.id + ")'>+</button>";
-          html += "</div></div>";
-          html += "<button class='remove-item' onclick='removeFromCart(" + item.id + ")'>Remove All</button>";
-          html += "</div>";
-        }
-        document.getElementById("cartItems").innerHTML = html;
-      }
-    }
+function toggleCart() {
+    alert("Cart functionality not yet added in this simplified version.");
+}
 
-    function increaseQuantity(id) {
-      var item = cart.find(item => item.id === id);
-      if (item) { item.quantity++; updateCart(); }
-    }
-    function decreaseQuantity(id) {
-      var item = cart.find(item => item.id === id);
-      if (item) {
-        if (item.quantity > 1) item.quantity--;
-        else cart = cart.filter(i => i.id !== id);
-        updateCart();
-      }
-    }
+init();
+</script>
 
-    function toggleCart() {
-      document.getElementById("cartSidebar").classList.toggle("active");
-      hideCheckout();
-    }
-
-    function showCheckout() {
-      if (cart.length === 0) {
-        alert("Your cart is empty!");
-        return;
-      }
-      document.getElementById("checkoutBtn").style.display = "none";
-      document.getElementById("cartItems").style.display = "none";
-      document.getElementById("cartTotal").style.display = "none";
-      document.getElementById("checkoutForm").classList.add("active");
-    }
-
-    function hideCheckout() {
-      document.getElementById("checkoutBtn").style.display = "block";
-      document.getElementById("cartItems").style.display = "block";
-      document.getElementById("cartTotal").style.display = "block";
-      document.getElementById("checkoutForm").classList.remove("active");
-    }
-
-    function submitOrderNow() {
-      var name = document.getElementById("customerName").value.trim();
-      var email = document.getElementById("customerEmail").value.trim();
-      if (!name || !email) {
-        alert("Please fill in all fields!"); return;
-      }
-      var total = 0;
-      var orderText = "";
-      for (var item of cart) {
-        total += item.price * item.quantity;
-        orderText += item.name + " - NT$ " + item.price + " x " + item.quantity + " = NT$ " + (item.price * item.quantity) + "\\n";
-      }
-
-      var subject = encodeURIComponent("New Order from Online Store");
-      var body = encodeURIComponent(
-        "New Order Received!\\n\\nCustomer: " + name +
-        "\\nEmail: " + email +
-        "\\n\\nOrder:\\n" + orderText +
-        "\\nTotal: NT$ " + total
-      );
-      window.location.href = "mailto:samanthachu1223@gmail.com?subject=" + subject + "&body=" + body;
-
-      setTimeout(function() {
-        alert("Thank you! Your order has been submitted.");
-        cart = [];
-        updateCart();
-        hideCheckout();
-        toggleCart();
-        document.getElementById("customerName").value = "";
-        document.getElementById("customerEmail").value = "";
-      }, 500);
-    }
-
-    init();
-  </script>
 </body>
 </html>
