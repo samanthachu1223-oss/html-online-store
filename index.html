@@ -65,7 +65,9 @@
         text-align: center;
         z-index: 2000;
         display: none;
-        max-width: 500px;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
     }
     .thank-you-message.active {
         display: block;
@@ -91,7 +93,32 @@
     .thank-you-message p {
         font-size: 1.2em;
         color: #2c3e50;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
+    }
+    .order-summary {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+        text-align: left;
+    }
+    .order-summary h3 {
+        color: #ff6a00;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    .order-item {
+        padding: 10px 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .order-item:last-child {
+        border-bottom: none;
+        font-weight: bold;
+        color: #ff6a00;
+        font-size: 1.2em;
+        padding-top: 15px;
+        margin-top: 10px;
+        border-top: 2px solid #ff6a00;
     }
     .thank-you-message button {
         padding: 15px 40px;
@@ -101,6 +128,7 @@
         border-radius: 8px;
         font-size: 1.1em;
         cursor: pointer;
+        margin-top: 10px;
     }
 </style>
 </head>
@@ -143,7 +171,7 @@
 <div class="thank-you-message" id="thankYouMessage">
     <h2>✅ Thanks for your order!</h2>
     <p>Please pay after you got the items~</p>
-    <p style="font-size: 1em; color: #7f8c8d;">A confirmation email has been sent to your inbox.</p>
+    <div class="order-summary" id="orderSummary"></div>
     <button onclick="closeThankYou()">Continue Shopping</button>
 </div>
 
@@ -151,11 +179,11 @@
 var products=[
 {id:1,name:"Twix Minis",description:"Delicious chocolate caramel biscuit",price:10,img:"https://gcs.rimg.com.tw/g1/6/bc/37/22228757099575_395.jpg",category:"snacks"},
 {id:2,name:"Want Want Senbei",description:"Classic rice crackers",price:10,img:"https://www.91zjdl.com/file/upload/202503/18/110711811.jpg.middle.jpg",category:"snacks"},
-{id:3,name:"North Sea Codfish Snack",description:"Shredded codfish snack (Thin/Medium size available)",price:80,img:"https://img.pchome.com.tw/cs/items/DBACHS1900GP05V/000001_1742180781.jpg",category:"snacks"},
+{id:3,name:"North Sea Codfish Snack",description:"Shredded codfish snack (Thin/Medium size available)",price:60,img:"https://img.pchome.com.tw/cs/items/DBACHS1900GP05V/000001_1742180781.jpg",category:"snacks"},
 {id:4,name:"Garlic Green Peas",description:"Crunchy garlic flavoured peas",price:15,img:"https://www.costco.com.tw/medias/sys_master/images/ha0/h0c/65765251907614.jpg",category:"snacks"},
-{id:5,name:"Wet Wipes",description:"Pure water baby wipes (20 sheets)",price:20,img:"https://i1.momoshop.com.tw/1692891638/goodsimg/0008/084/433/8084433_OR_m.webp",imgClass:"large",category:"daily"},
-{id:6,name:"Alcohol Wipes",description:"Disinfecting alcohol wipes (20 sheets)",price:20,img:"https://www.wellcare.com.tw/upload/2023_07_1714/20230717170747cuwc96Pw71.jpg",category:"daily"},
-{id:7,name:"Band-Aid (Waterproof)",description:"Skin color (76 mm × 19 mm)",price:10,img:"https://cosmebear.tw/cdn/shop/products/band-aid-ok-386265.jpg?v=1687585186&width=360",category:"daily"},
+{id:5,name:"Wet Wipes",description:"Pure water baby wipes (20 sheets)",price:35,img:"https://i1.momoshop.com.tw/1692891638/goodsimg/0008/084/433/8084433_OR_m.webp",imgClass:"large",category:"daily"},
+{id:6,name:"Alcohol Wipes",description:"Disinfecting alcohol wipes (20 sheets)",price:60,img:"https://www.wellcare.com.tw/upload/2023_07_1714/20230717170747cuwc96Pw71.jpg",category:"daily"},
+{id:7,name:"Band-Aid (Waterproof)",description:"Skin color (76 mm × 19 mm)",price:15,img:"https://cosmebear.tw/cdn/shop/products/band-aid-ok-386265.jpg?v=1687585186&width=360",category:"daily"},
 {id:8,name:"Small Band-Aid (Waterproof)",description:"For wounds under 1cm - Waterproof",price:5,img:"https://shop.r10s.com/384/dc0/4880/4fb0/7066/20f4/03fc/11e9efa7640242ac110002.jpg",category:"daily"},
 {id:9,name:"Small Band-Aid (Hypoallergenic)",description:"For wounds under 1cm - Skin-tone, low sensitivity",price:5,img:"https://shop.r10s.com/384/dc0/4880/4fb0/7066/20f4/03fc/11e9efa7640242ac110002.jpg",category:"daily"},
 {id:10,name:"Pocket Tissues",description:"Minions pattern (10 sheets)",price:10,img:"https://mall.iopenmall.tw/website/uploads_product/website_43989/P4398906638788_4_77141426.jpg?hash=96815",category:"daily"}
@@ -174,7 +202,19 @@ function decreaseQuantity(id){var item=cart.find(c=>c.id===id);if(item){if(item.
 function toggleCart(){document.getElementById("cartSidebar").classList.toggle("active");hideCheckout();}
 function showCheckout(){if(cart.length===0){alert("Your cart is empty!");return;}document.getElementById("checkoutBtn").style.display="none";document.getElementById("cartItems").style.display="none";document.getElementById("cartTotal").style.display="none";document.getElementById("checkoutForm").classList.add("active");}
 function hideCheckout(){document.getElementById("checkoutBtn").style.display="block";document.getElementById("cartItems").style.display="block";document.getElementById("cartTotal").style.display="block";document.getElementById("checkoutForm").classList.remove("active");}
-function submitOrderNow(){var name=document.getElementById("customerName").value.trim();var email=document.getElementById("customerEmail").value.trim();if(!name||!email){alert("Please fill in all fields!");return;}if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("Please enter a valid email address!");return;}var total=0,orderText="";for(var i=0;i<cart.length;i++){var item=cart[i];total+=item.price*item.quantity;orderText+=item.name+" - NT$ "+item.price+" x "+item.quantity+" = NT$ "+(item.price*item.quantity)+"\n";}var form=document.createElement("form");form.method="POST";form.action="https://formsubmit.co/samanthachu1223@gmail.com";form.target="hiddenFrame";var fields={"_subject":"New Order from Online Store","_captcha":"false","_template":"table","_autoresponse":"Thank you for your order! We will contact you soon. Order details: "+orderText+" Total: NT$ "+total,"name":name,"email":email,"order":orderText,"total":"NT$ "+total};for(var key in fields){var input=document.createElement("input");input.type="hidden";input.name=key;input.value=fields[key];form.appendChild(input);}var iframe=document.createElement("iframe");iframe.name="hiddenFrame";iframe.style.display="none";document.body.appendChild(iframe);document.body.appendChild(form);form.submit();document.body.removeChild(form);setTimeout(function(){document.body.removeChild(iframe);},1000);document.getElementById("thankYouOverlay").classList.add("active");document.getElementById("thankYouMessage").classList.add("active");cart=[];updateCart();hideCheckout();document.getElementById("customerName").value="";document.getElementById("customerEmail").value="";}
+function submitOrderNow(){var name=document.getElementById("customerName").value.trim();var email=document.getElementById("customerEmail").value.trim();if(!name||!email){alert("Please fill in all fields!");return;}if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("Please enter a valid email address!");return;}
+var total=0,orderText="",orderHTML="";
+for(var i=0;i<cart.length;i++){var item=cart[i];total+=item.price*item.quantity;orderText+=item.name+" - NT$ "+item.price+" x "+item.quantity+" = NT$ "+(item.price*item.quantity)+"\n";orderHTML+="<div class='order-item'>"+item.name+" - NT$ "+item.price+" × "+item.quantity+" = NT$ "+(item.price*item.quantity)+"</div>";}
+orderHTML+="<div class='order-item'>Total: NT$ "+total+"</div>";
+document.getElementById("orderSummary").innerHTML="<h3>📋 Order Details</h3><p style='text-align:center; margin-bottom:15px;'><strong>"+name+"</strong><br>"+email+"</p>"+orderHTML;
+var form=document.createElement("form");form.method="POST";form.action="https://formsubmit.co/samanthachu1223@gmail.com";form.target="hiddenFrame";var fields={"_subject":"New Order from "+name,"_captcha":"false","_template":"table","Customer Name":name,"Customer Email":email,"Order Details":orderText,"Total":"NT$ "+total};for(var key in fields){var input=document.createElement("input");input.type="hidden";input.name=key;input.value=fields[key];form.appendChild(input);}
+var iframe=document.createElement("iframe");iframe.name="hiddenFrame";iframe.style.display="none";document.body.appendChild(iframe);document.body.appendChild(form);form.submit();setTimeout(function(){document.body.removeChild(form);document.body.removeChild(iframe);},2000);
+document.getElementById("thankYouOverlay").classList.add("active");document.getElementById("thankYouMessage").classList.add("active");
+hideCheckout();
+cart=[];
+updateCart();
+document.getElementById("customerName").value="";
+document.getElementById("customerEmail").value="";}
 function closeThankYou(){document.getElementById("thankYouOverlay").classList.remove("active");document.getElementById("thankYouMessage").classList.remove("active");toggleCart();}
 init();
 </script>
