@@ -53,7 +53,55 @@
     .submit-order-btn, .back-btn { width: 100%; padding: 15px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; }
     .submit-order-btn { background: linear-gradient(135deg, #ff9a56 0%, #ff6a00 100%); color: white; }
     .back-btn { background: #95a5a6; color: white; }
-    .empty-cart { text-align: center; padding: 40px; color: #7f8c8d; }
+    .thank-you-message {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        text-align: center;
+        z-index: 2000;
+        display: none;
+        max-width: 500px;
+    }
+    .thank-you-message.active {
+        display: block;
+    }
+    .thank-you-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1999;
+        display: none;
+    }
+    .thank-you-overlay.active {
+        display: block;
+    }
+    .thank-you-message h2 {
+        color: #ff6a00;
+        margin-bottom: 20px;
+        font-size: 2em;
+    }
+    .thank-you-message p {
+        font-size: 1.2em;
+        color: #2c3e50;
+        margin-bottom: 30px;
+    }
+    .thank-you-message button {
+        padding: 15px 40px;
+        background: linear-gradient(135deg, #ff9a56 0%, #ff6a00 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1em;
+        cursor: pointer;
+    }
 </style>
 </head>
 <body>
@@ -91,6 +139,14 @@
     </div>
 </div>
 
+<div class="thank-you-overlay" id="thankYouOverlay"></div>
+<div class="thank-you-message" id="thankYouMessage">
+    <h2>✅ Thanks for your order!</h2>
+    <p>Please pay after you got the items~</p>
+    <p style="font-size: 1em; color: #7f8c8d;">A confirmation email has been sent to your inbox.</p>
+    <button onclick="closeThankYou()">Continue Shopping</button>
+</div>
+
 <script>
 var products=[
 {id:1,name:"Twix Minis",description:"Delicious chocolate caramel biscuit",price:10,img:"https://gcs.rimg.com.tw/g1/6/bc/37/22228757099575_395.jpg",category:"snacks"},
@@ -118,7 +174,8 @@ function decreaseQuantity(id){var item=cart.find(c=>c.id===id);if(item){if(item.
 function toggleCart(){document.getElementById("cartSidebar").classList.toggle("active");hideCheckout();}
 function showCheckout(){if(cart.length===0){alert("Your cart is empty!");return;}document.getElementById("checkoutBtn").style.display="none";document.getElementById("cartItems").style.display="none";document.getElementById("cartTotal").style.display="none";document.getElementById("checkoutForm").classList.add("active");}
 function hideCheckout(){document.getElementById("checkoutBtn").style.display="block";document.getElementById("cartItems").style.display="block";document.getElementById("cartTotal").style.display="block";document.getElementById("checkoutForm").classList.remove("active");}
-function submitOrderNow(){var name=document.getElementById("customerName").value.trim();var email=document.getElementById("customerEmail").value.trim();if(!name||!email){alert("Please fill in all fields!");return;}if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("Please enter a valid email address!");return;}var total=0,orderText="";for(var i=0;i<cart.length;i++){var item=cart[i];total+=item.price*item.quantity;orderText+=item.name+" - NT$ "+item.price+" x "+item.quantity+" = NT$ "+(item.price*item.quantity)+"\n";}var form=document.createElement("form");form.method="POST";form.action="https://formsubmit.co/samanthachu1223@gmail.com";form.target="_blank";var fields={"_subject":"New Order from Online Store","_captcha":"false","_template":"table","_next":"https://samanthachu1223-oss.github.io/html-online-store/","name":name,"email":email,"order":orderText,"total":"NT$ "+total};for(var key in fields){var input=document.createElement("input");input.type="hidden";input.name=key;input.value=fields[key];form.appendChild(input);}document.body.appendChild(form);form.submit();document.body.removeChild(form);alert("Thank you "+name+"! Your order has been submitted.\n\nOrder Total: NT$ "+total+"\n\nWe will contact you at "+email+" shortly!");cart=[];updateCart();hideCheckout();toggleCart();document.getElementById("customerName").value="";document.getElementById("customerEmail").value="";}
+function submitOrderNow(){var name=document.getElementById("customerName").value.trim();var email=document.getElementById("customerEmail").value.trim();if(!name||!email){alert("Please fill in all fields!");return;}if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("Please enter a valid email address!");return;}var total=0,orderText="";for(var i=0;i<cart.length;i++){var item=cart[i];total+=item.price*item.quantity;orderText+=item.name+" - NT$ "+item.price+" x "+item.quantity+" = NT$ "+(item.price*item.quantity)+"\n";}var form=document.createElement("form");form.method="POST";form.action="https://formsubmit.co/samanthachu1223@gmail.com";form.target="hiddenFrame";var fields={"_subject":"New Order from Online Store","_captcha":"false","_template":"table","_autoresponse":"Thank you for your order! We will contact you soon. Order details: "+orderText+" Total: NT$ "+total,"name":name,"email":email,"order":orderText,"total":"NT$ "+total};for(var key in fields){var input=document.createElement("input");input.type="hidden";input.name=key;input.value=fields[key];form.appendChild(input);}var iframe=document.createElement("iframe");iframe.name="hiddenFrame";iframe.style.display="none";document.body.appendChild(iframe);document.body.appendChild(form);form.submit();document.body.removeChild(form);setTimeout(function(){document.body.removeChild(iframe);},1000);document.getElementById("thankYouOverlay").classList.add("active");document.getElementById("thankYouMessage").classList.add("active");cart=[];updateCart();hideCheckout();document.getElementById("customerName").value="";document.getElementById("customerEmail").value="";}
+function closeThankYou(){document.getElementById("thankYouOverlay").classList.remove("active");document.getElementById("thankYouMessage").classList.remove("active");toggleCart();}
 init();
 </script>
 </body>
