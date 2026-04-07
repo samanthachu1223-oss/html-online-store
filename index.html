@@ -1,21 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-<link rel="stylesheet" href="style.css">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Online Store</title>
+
+<!-- 外部CSS -->
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 <div class="container">
     <header>
         <h1>🛍️ Online Store</h1>
         <p>Shop our amazing products!</p>
-        <div class="cart-icon" onclick="toggleCart()">🛒<span class="cart-count" id="cartCount">0</span></div>
+        <div class="cart-icon" onclick="toggleCart()">
+            🛒<span class="cart-count" id="cartCount">0</span>
+        </div>
     </header>
+
     <div class="category-tabs" id="categoryTabs"></div>
     <div id="products"></div>
 </div>
+
 <div class="cart-sidebar" id="cartSidebar">
     <div class="cart-header">
         <h2>Shopping Cart</h2>
@@ -23,17 +30,18 @@
     </div>
     <div class="cart-items" id="cartItems"></div>
     <div class="cart-total" id="cartTotal">Total: NT$ 0</div>
+
     <button class="checkout-btn" id="checkoutBtn" onclick="showCheckout()">Checkout</button>
-    
+
     <div class="checkout-form" id="checkoutForm">
         <h3>Enter Your Details</h3>
         <div class="form-group">
             <label>Name *</label>
-            <input type="text" id="customerName" placeholder="Your full name" required>
+            <input type="text" id="customerName" required>
         </div>
         <div class="form-group">
             <label>Email *</label>
-            <input type="email" id="customerEmail" placeholder="your.email@example.com" required>
+            <input type="email" id="customerEmail" required>
         </div>
         <button class="submit-order-btn" onclick="submitOrderNow()">Submit Order</button>
         <button class="back-btn" onclick="hideCheckout()">Back to Cart</button>
@@ -47,6 +55,8 @@
     <div class="order-summary" id="orderSummary"></div>
     <button onclick="closeThankYou()">Continue Shopping</button>
 </div>
+
+<!-- 外部JS -->
 <script src="script.js"></script>
 </body>
 </html>
