@@ -1,4 +1,3 @@
-<script>
 var products=[
 {id:1,name:"Twix Minis",description:"Delicious chocolate caramel biscuit",price:10,img:"https://gcs.rimg.com.tw/g1/6/bc/37/22228757099575_395.jpg",category:"snacks"},
 {id:2,name:"Want Want Senbei",description:"Classic rice crackers",price:10,img:"https://www.91zjdl.com/file/upload/202503/18/110711811.jpg.middle.jpg",category:"snacks"},
@@ -40,4 +39,3 @@ document.getElementById("customerName").value="";
 document.getElementById("customerEmail").value="";}
 function closeThankYou(){document.getElementById("thankYouOverlay").classList.remove("active");document.getElementById("thankYouMessage").classList.remove("active");toggleCart();}
 init();
-</script>
