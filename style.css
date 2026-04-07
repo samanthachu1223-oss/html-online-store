@@ -1,4 +1,3 @@
-<style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #ff9a56 0%, #ff6a00 100%); min-height: 100vh; padding: 20px; }
     .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
@@ -124,4 +123,3 @@
         cursor: pointer;
         margin-top: 10px;
     }
-</style>
