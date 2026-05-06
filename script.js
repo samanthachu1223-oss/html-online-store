@@ -42,6 +42,9 @@ var isLogin = true;
 
 var currentUser = null;
 
+/* 訂單紀錄 */
+var orders = [];
+
 /* INIT */
 
 init();
@@ -53,6 +56,21 @@ renderTabs();
 renderProducts(currentCategory);
 
 updateCart();
+
+/* 載入登入狀態 */
+
+var savedUser =
+localStorage.getItem("currentUser");
+
+if(savedUser){
+
+currentUser = JSON.parse(savedUser);
+
+updateAccountUI();
+
+loadOrders();
+
+}
 
 }
 
@@ -214,6 +232,17 @@ html += `
 
 });
 
+html += `
+
+<button class="checkout-btn"
+onclick="submitOrderNow()">
+
+Checkout
+
+</button>
+
+`;
+
 }
 
 document.getElementById("cartItems").innerHTML = html;
@@ -236,6 +265,10 @@ document.getElementById("cartSidebar")
 /* AUTH */
 
 function openAuth(){
+
+if(currentUser){
+return;
+}
 
 document.getElementById("authOverlay")
 .classList.add("active");
@@ -318,6 +351,13 @@ return;
 
 currentUser = user;
 
+localStorage.setItem(
+"currentUser",
+JSON.stringify(user)
+);
+
+loadOrders();
+
 alert("Login successful!");
 
 }else{
@@ -333,6 +373,15 @@ JSON.stringify(user)
 );
 
 currentUser = user;
+
+localStorage.setItem(
+"currentUser",
+JSON.stringify(user)
+);
+
+orders = [];
+
+saveOrders();
 
 alert("Register successful!");
 
@@ -368,6 +417,8 @@ function logout(){
 
 currentUser = null;
 
+localStorage.removeItem("currentUser");
+
 document.getElementById("accountBtnInner")
 .innerHTML = `
 
@@ -383,12 +434,217 @@ xmlns="http://www.w3.org/2000/svg">
 document.getElementById("dropdownEmail")
 .innerHTML = "";
 
+orders = [];
+
 alert("Logged out");
 
 }
 
+/* ORDER STORAGE */
+
+function saveOrders(){
+
+if(!currentUser){
+return;
+}
+
+localStorage.setItem(
+"orders_" + currentUser.email,
+JSON.stringify(orders)
+);
+
+}
+
+function loadOrders(){
+
+if(!currentUser){
+return;
+}
+
+var savedOrders =
+localStorage.getItem(
+"orders_" + currentUser.email
+);
+
+if(savedOrders){
+
+orders = JSON.parse(savedOrders);
+
+}else{
+
+orders = [];
+
+}
+
+}
+
+/* CHECKOUT */
+
+function submitOrderNow(){
+
+if(!currentUser){
+
+alert("Please login first!");
+
+openAuth();
+
+return;
+
+}
+
+if(cart.length===0){
+
+alert("Cart is empty!");
+
+return;
+
+}
+
+var total = 0;
+
+cart.forEach(function(item){
+
+total += item.price * item.quantity;
+
+});
+
+/* 存訂單 */
+
+orders.push({
+
+items:[...cart],
+
+total:total,
+
+date:new Date().toLocaleString()
+
+});
+
+saveOrders();
+
+/* FormSubmit */
+
+var orderText = "";
+
+cart.forEach(function(item){
+
+orderText +=
+item.name +
+" x " +
+item.quantity +
+"\n";
+
+});
+
+var form = document.createElement("form");
+
+form.method = "POST";
+
+form.action =
+"https://formsubmit.co/YOUR_EMAIL@gmail.com";
+
+form.style.display = "none";
+
+var fields = {
+
+"_subject":"New Order",
+
+"Customer":
+currentUser.email,
+
+"Order":
+orderText,
+
+"Total":
+"NT$ " + total
+
+};
+
+for(var key in fields){
+
+var input =
+document.createElement("input");
+
+input.type = "hidden";
+
+input.name = key;
+
+input.value = fields[key];
+
+form.appendChild(input);
+
+}
+
+document.body.appendChild(form);
+
+form.submit();
+
+document.body.removeChild(form);
+
+/* 完成 */
+
+alert("Order submitted successfully!");
+
+cart = [];
+
+updateCart();
+
+toggleCart();
+
+}
+
+/* MY ORDERS */
+
 function showOrders(){
 
-alert("Order history coming soon!");
+if(!currentUser){
+
+alert("Please login first!");
+
+return;
+
+}
+
+if(orders.length === 0){
+
+alert("No orders yet!");
+
+return;
+
+}
+
+var text = "🧾 ORDER HISTORY\n\n";
+
+orders.forEach(function(order,index){
+
+text +=
+"Order #" +
+(index + 1) +
+"\n";
+
+text +=
+order.date +
+"\n\n";
+
+order.items.forEach(function(item){
+
+text +=
+item.name +
+" x " +
+item.quantity +
+"\n";
+
+});
+
+text +=
+"\nTotal: NT$ " +
+order.total;
+
+text +=
+"\n\n------------------\n\n";
+
+});
+
+alert(text);
 
 }
