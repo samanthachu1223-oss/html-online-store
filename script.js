@@ -1,3 +1,7 @@
+/* =========================
+   PRODUCTS
+========================= */
+
 var products = [
 
 {
@@ -29,12 +33,25 @@ category:"daily"
 
 ];
 
+/* =========================
+   CATEGORIES
+========================= */
+
 var categories = {
+
 snacks:"🍿 Snacks",
+
 daily:"🏠 Daily Essentials"
+
 };
 
+/* =========================
+   VARIABLES
+========================= */
+
 var cart = [];
+
+var orders = [];
 
 var currentCategory = "snacks";
 
@@ -42,10 +59,9 @@ var isLogin = true;
 
 var currentUser = null;
 
-/* 訂單紀錄 */
-var orders = [];
-
-/* INIT */
+/* =========================
+   INIT
+========================= */
 
 init();
 
@@ -57,14 +73,15 @@ renderProducts(currentCategory);
 
 updateCart();
 
-/* 載入登入狀態 */
+/* 自動登入 */
 
 var savedUser =
 localStorage.getItem("currentUser");
 
 if(savedUser){
 
-currentUser = JSON.parse(savedUser);
+currentUser =
+JSON.parse(savedUser);
 
 updateAccountUI();
 
@@ -74,7 +91,9 @@ loadOrders();
 
 }
 
-/* CATEGORY */
+/* =========================
+   CATEGORY TABS
+========================= */
 
 function renderTabs(){
 
@@ -83,17 +102,21 @@ var html = "";
 for(var key in categories){
 
 html += `
+
 <div class="category-tab ${key===currentCategory ? 'active':''}"
+
 onclick="switchCategory('${key}')">
 
 ${categories[key]}
 
 </div>
+
 `;
 
 }
 
-document.getElementById("categoryTabs").innerHTML = html;
+document.getElementById("categoryTabs")
+.innerHTML = html;
 
 }
 
@@ -107,43 +130,57 @@ renderProducts(cat);
 
 }
 
-/* PRODUCTS */
+/* =========================
+   PRODUCTS
+========================= */
 
 function renderProducts(cat){
 
 var html = `
+
 <div class="category-section">
 
 <h2 class="category-title">
+
 ${categories[cat]}
+
 </h2>
 
 <div class="category-products">
+
 `;
 
 products.forEach(function(p){
 
-if(p.category===cat){
+if(p.category === cat){
 
 html += `
+
 <div class="product-card">
 
 <img class="product-img"
 src="${p.img}">
 
 <h3 class="product-title">
+
 ${p.name}
+
 </h3>
 
 <p class="product-description">
+
 ${p.description}
+
 </p>
 
 <div class="product-price">
+
 NT$ ${p.price}
+
 </div>
 
 <button class="add-btn"
+
 onclick="addToCart(${p.id})">
 
 Add to Cart
@@ -151,25 +188,45 @@ Add to Cart
 </button>
 
 </div>
+
 `;
 
 }
 
 });
 
-html += "</div></div>";
+html += `
 
-document.getElementById("products").innerHTML = html;
+</div>
+
+</div>
+
+`;
+
+document.getElementById("products")
+.innerHTML = html;
 
 }
 
-/* CART */
+/* =========================
+   CART
+========================= */
 
 function addToCart(id){
 
-var product = products.find(p=>p.id===id);
+var product =
+products.find(function(p){
 
-var item = cart.find(c=>c.id===id);
+return p.id === id;
+
+});
+
+var item =
+cart.find(function(c){
+
+return c.id === id;
+
+});
 
 if(item){
 
@@ -177,9 +234,24 @@ item.quantity++;
 
 }else{
 
+/* 不用 ...product */
+
 cart.push({
-...product,
-quantity:1
+
+id: product.id,
+
+name: product.name,
+
+description: product.description,
+
+price: product.price,
+
+img: product.img,
+
+category: product.category,
+
+quantity: 1
+
 });
 
 }
@@ -196,12 +268,16 @@ var total = 0;
 
 var count = 0;
 
-if(cart.length===0){
+if(cart.length === 0){
 
 html = `
+
 <div class="empty-cart">
+
 Your cart is empty
+
 </div>
+
 `;
 
 }else{
@@ -213,6 +289,7 @@ total += item.price * item.quantity;
 count += item.quantity;
 
 html += `
+
 <div class="cart-item">
 
 <img src="${item.img}">
@@ -228,6 +305,7 @@ html += `
 </div>
 
 </div>
+
 `;
 
 });
@@ -235,6 +313,7 @@ html += `
 html += `
 
 <button class="checkout-btn"
+
 onclick="submitOrderNow()">
 
 Checkout
@@ -245,13 +324,14 @@ Checkout
 
 }
 
-document.getElementById("cartItems").innerHTML = html;
+document.getElementById("cartItems")
+.innerHTML = html;
 
-document.getElementById("cartTotal").innerHTML =
-`Total: NT$ ${total}`;
+document.getElementById("cartTotal")
+.innerHTML = `Total: NT$ ${total}`;
 
-document.getElementById("cartCount").innerHTML =
-count;
+document.getElementById("cartCount")
+.innerHTML = count;
 
 }
 
@@ -262,12 +342,16 @@ document.getElementById("cartSidebar")
 
 }
 
-/* AUTH */
+/* =========================
+   AUTH
+========================= */
 
 function openAuth(){
 
 if(currentUser){
+
 return;
+
 }
 
 document.getElementById("authOverlay")
@@ -363,8 +447,11 @@ alert("Login successful!");
 }else{
 
 var user = {
-email:email,
-password:password
+
+email: email,
+
+password: password
+
 };
 
 localStorage.setItem(
@@ -396,13 +483,18 @@ closeAuth();
 function updateAccountUI(){
 
 var first =
-currentUser.email[0].toUpperCase();
+currentUser.email[0]
+.toUpperCase();
 
 document.getElementById("accountBtnInner")
 .innerHTML = `
+
 <div class="avatar-letter">
+
 ${first}
+
 </div>
+
 `;
 
 document.getElementById("dropdownName")
@@ -429,6 +521,7 @@ xmlns="http://www.w3.org/2000/svg">
 <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
 
 </svg>
+
 `;
 
 document.getElementById("dropdownEmail")
@@ -440,17 +533,24 @@ alert("Logged out");
 
 }
 
-/* ORDER STORAGE */
+/* =========================
+   ORDER STORAGE
+========================= */
 
 function saveOrders(){
 
 if(!currentUser){
+
 return;
+
 }
 
 localStorage.setItem(
+
 "orders_" + currentUser.email,
+
 JSON.stringify(orders)
+
 );
 
 }
@@ -458,12 +558,17 @@ JSON.stringify(orders)
 function loadOrders(){
 
 if(!currentUser){
+
 return;
+
 }
 
 var savedOrders =
+
 localStorage.getItem(
+
 "orders_" + currentUser.email
+
 );
 
 if(savedOrders){
@@ -478,7 +583,9 @@ orders = [];
 
 }
 
-/* CHECKOUT */
+/* =========================
+   CHECKOUT
+========================= */
 
 function submitOrderNow(){
 
@@ -492,7 +599,7 @@ return;
 
 }
 
-if(cart.length===0){
+if(cart.length === 0){
 
 alert("Cart is empty!");
 
@@ -512,36 +619,43 @@ total += item.price * item.quantity;
 
 orders.push({
 
-items:[...cart],
+items: JSON.parse(JSON.stringify(cart)),
 
-total:total,
+total: total,
 
-date:new Date().toLocaleString()
+date: new Date().toLocaleString()
 
 });
 
 saveOrders();
 
-/* FormSubmit */
+/* FORM SUBMIT */
 
 var orderText = "";
 
 cart.forEach(function(item){
 
 orderText +=
+
 item.name +
+
 " x " +
+
 item.quantity +
+
 "\n";
 
 });
 
-var form = document.createElement("form");
+var form =
+document.createElement("form");
 
 form.method = "POST";
 
+/* 改成你的 Email */
+
 form.action =
-"https://formsubmit.co/YOUR_EMAIL@gmail.com";
+"https://formsubmit.co/samanthachu1223@gmail.com";
 
 form.style.display = "none";
 
@@ -593,7 +707,9 @@ toggleCart();
 
 }
 
-/* MY ORDERS */
+/* =========================
+   MY ORDERS
+========================= */
 
 function showOrders(){
 
@@ -618,29 +734,41 @@ var text = "🧾 ORDER HISTORY\n\n";
 orders.forEach(function(order,index){
 
 text +=
+
 "Order #" +
+
 (index + 1) +
+
 "\n";
 
 text +=
+
 order.date +
+
 "\n\n";
 
 order.items.forEach(function(item){
 
 text +=
+
 item.name +
+
 " x " +
+
 item.quantity +
+
 "\n";
 
 });
 
 text +=
+
 "\nTotal: NT$ " +
+
 order.total;
 
 text +=
+
 "\n\n------------------\n\n";
 
 });
