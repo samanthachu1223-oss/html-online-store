@@ -41,7 +41,8 @@ function clearSession() {
 }
 
 // ---- Account button / dropdown ----
-function handleAccountClick() {
+function handleAccountClick(e) {
+  e.stopPropagation(); // prevent the document listener from closing it immediately
   if (currentUser) {
     document.getElementById("accountDropdown").classList.toggle("open");
   } else {
@@ -162,21 +163,18 @@ function logout() {
 
 // ---- Update UI after auth state change ----
 function updateAccountUI() {
-  var icon  = document.getElementById("accountBtnIcon");
-  var label = document.getElementById("accountBtnLabel");
+  var inner = document.getElementById("accountBtnInner");
 
   if (currentUser) {
     var initial = (currentUser.name ? currentUser.name[0] : currentUser.email[0]).toUpperCase();
-    icon.innerHTML = '<div class="avatar">' + initial + '</div>';
-    label.textContent = currentUser.name || currentUser.email.split("@")[0];
+    inner.innerHTML = '<span class="avatar-letter">' + initial + '</span>';
     document.getElementById("dropdownName").textContent  = "Hello, " + (currentUser.name || "there") + "!";
     document.getElementById("dropdownEmail").textContent = currentUser.email;
     // Pre-fill checkout form
     if (currentUser.name) document.getElementById("customerName").value = currentUser.name;
     document.getElementById("customerEmail").value = currentUser.email;
   } else {
-    icon.textContent  = "👤";
-    label.textContent = "Account";
+    inner.innerHTML = '<svg class="icon-person" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>';
   }
 }
 
