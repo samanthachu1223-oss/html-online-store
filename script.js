@@ -802,17 +802,12 @@ function submitOrderNow() {
 
   }
 
-  /* 儲存訂單 */
-
-  orders.push({
-
-    items: JSON.parse(JSON.stringify(cart)),
-
-    total: total,
-
-    date: new Date().toLocaleString()
-
-  });
+ saveOrderToFirebase({
+   
+   items: JSON.parse(JSON.stringify(cart)),
+   total: total
+ 
+ });
 
   saveOrders();
 
