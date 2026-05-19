@@ -125,9 +125,11 @@ header p{
 /* DROPDOWN */
 
 .account-dropdown{
+
   position:absolute;
 
-  top:65px;
+  top:60px;
+
   right:0;
 
   background:white;
@@ -143,17 +145,25 @@ header p{
   z-index:99999;
 
   opacity:0;
+
   pointer-events:none;
 
   transform:translateY(-10px);
 
   transition:0.25s;
+
 }
 
-.account-wrapper:hover .account-dropdown{
+/* 點擊後打開 */
+
+.account-dropdown.open{
+
   opacity:1;
+
   pointer-events:auto;
+
   transform:translateY(0);
+
 }
 
 .dropdown-user{
