@@ -40,7 +40,6 @@ where
 
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-
 // ============================================================
 // FIREBASE CONFIG
 // ============================================================
@@ -63,7 +62,6 @@ measurementId: "G-0VJSHS97DJ"
 
 };
 
-
 // ============================================================
 // INIT
 // ============================================================
@@ -74,13 +72,11 @@ const auth = getAuth(app);
 
 const db = getFirestore(app);
 
-
 // ============================================================
 // GLOBAL
 // ============================================================
 
 window.currentUser = null;
-
 
 // ============================================================
 // REGISTER
@@ -89,7 +85,7 @@ window.currentUser = null;
 window.doRegister = async function(){
 
 const email =
-document.getElementById("regEmail").value.trim();
+document.getElementById("regEmail").value;
 
 const password =
 document.getElementById("regPassword").value;
@@ -124,27 +120,12 @@ msg.textContent =
 
 }catch(error){
 
-if(error.code === "auth/email-already-in-use"){
-
 msg.textContent =
-"This email is already registered.";
-
-}else if(error.code === "auth/weak-password"){
-
-msg.textContent =
-"Password must be at least 6 characters.";
-
-}else{
-
-msg.textContent =
-"Register failed.";
-
-}
+error.message;
 
 }
 
 };
-
 
 // ============================================================
 // LOGIN
@@ -153,7 +134,7 @@ msg.textContent =
 window.doLogin = async function(){
 
 const email =
-document.getElementById("loginEmail").value.trim();
+document.getElementById("loginEmail").value;
 
 const password =
 document.getElementById("loginPassword").value;
@@ -176,24 +157,12 @@ msg.textContent =
 
 }catch(error){
 
-if(
-error.code === "auth/invalid-credential"
-){
-
 msg.textContent =
-"Incorrect email or password.";
-
-}else{
-
-msg.textContent =
-"Login failed.";
-
-}
+error.message;
 
 }
 
 };
-
 
 // ============================================================
 // LOGOUT
@@ -205,7 +174,6 @@ await signOut(auth);
 
 };
 
-
 // ============================================================
 // AUTH STATE
 // ============================================================
@@ -216,20 +184,19 @@ if(user){
 
 window.currentUser = user;
 
-window.updateAccountUI(user.email);
+updateAccountUI(user.email);
 
-window.closeAuth();
+closeAuth();
 
 }else{
 
 window.currentUser = null;
 
-window.updateAccountUI(null);
+updateAccountUI(null);
 
 }
 
 });
-
 
 // ============================================================
 // SAVE ORDER
@@ -277,7 +244,6 @@ console.error(error);
 
 };
 
-
 // ============================================================
 // SHOW ORDERS
 // ============================================================
@@ -297,13 +263,9 @@ const q = query(
 collection(db,"orders"),
 
 where(
-
 "userEmail",
-
 "==",
-
 window.currentUser.email
-
 )
 
 );
@@ -311,16 +273,25 @@ window.currentUser.email
 const querySnapshot =
 await getDocs(q);
 
+const ordersOverlay =
+document.getElementById("ordersOverlay");
+
+const ordersBody =
+document.getElementById("ordersBody");
+
 if(querySnapshot.empty){
 
-alert("No orders yet!");
+ordersBody.innerHTML =
+
+"<p>No orders yet!</p>";
+
+ordersOverlay.classList.add("active");
 
 return;
 
 }
 
-let text =
-"🧾 ORDER HISTORY\n\n";
+let html = "";
 
 let index = 1;
 
@@ -328,36 +299,45 @@ querySnapshot.forEach((doc)=>{
 
 const order = doc.data();
 
-text +=
-"Order #" +
-index +
-"\n";
+html +=
 
-text +=
+"<div class='order-card'>" +
+
+"<h3>Order #" +
+index +
+"</h3>" +
+
+"<div class='order-date'>" +
 order.date +
-"\n\n";
+"</div>";
 
 order.items.forEach((item)=>{
 
-text +=
+html +=
+
+"<div class='order-item'>" +
 item.name +
-" x " +
+" × " +
 item.quantity +
-"\n";
+"</div>";
 
 });
 
-text +=
-"\nTotal: NT$ " +
-order.total;
+html +=
 
-text +=
-"\n\n------------------\n\n";
+"<div class='order-total'>" +
+"Total: NT$ " +
+order.total +
+"</div>" +
+
+"</div>";
 
 index++;
 
 });
 
-alert(text);
+ordersBody.innerHTML = html;
+
+ordersOverlay.classList.add("active");
 
 };
