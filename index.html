@@ -1,127 +1,308 @@
-<!-- AUTH MODAL -->
+<!DOCTYPE html>
+<html lang="en">
 
-<div class="auth-overlay" id="authOverlay"
-onclick="closeAuthOnOverlay(event)">
+<head>
 
-  <div class="auth-modal">
+<meta charset="UTF-8">
 
-    <div class="auth-modal-header">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-      <h2>👤 Account</h2>
+<title>Online Store</title>
 
-      <span class="auth-close"
-      onclick="closeAuth()">✕</span>
+<link rel="stylesheet" href="style.css">
 
-    </div>
+</head>
 
-    <div class="auth-tabs">
+<body>
 
-      <div class="auth-tab active"
-      id="tabLogin"
-      onclick="switchAuthTab('login')">
+<div class="container">
 
-        Login
+<header>
 
-      </div>
+<h1>🛍️ Online Store</h1>
 
-      <div class="auth-tab"
-      id="tabRegister"
-      onclick="switchAuthTab('register')">
+<p>Shop our amazing products!</p>
 
-        Register
+<div class="header-right">
 
-      </div>
+<!-- CART -->
 
-    </div>
+<div class="cart-icon"
+onclick="toggleCart()">
 
-    <div class="auth-body">
+🛒
 
-      <!-- LOGIN -->
+<span class="cart-count"
+id="cartCount">
 
-      <div class="auth-form active"
-      id="formLogin">
+0
 
-        <div class="form-group">
-
-          <label>Email</label>
-
-          <input type="email"
-          id="loginEmail"
-          placeholder="your@email.com">
-
-        </div>
-
-        <div class="form-group">
-
-          <label>Password</label>
-
-          <input type="password"
-          id="loginPassword"
-          placeholder="Enter password">
-
-        </div>
-
-        <button class="auth-submit-btn"
-        onclick="doLogin()">
-
-          Login
-
-        </button>
-
-        <div class="auth-msg"
-        id="loginMsg"></div>
-
-      </div>
-
-      <!-- REGISTER -->
-
-      <div class="auth-form"
-      id="formRegister">
-
-        <div class="form-group">
-
-          <label>Email</label>
-
-          <input type="email"
-          id="regEmail"
-          placeholder="your@email.com">
-
-        </div>
-
-        <div class="form-group">
-
-          <label>Password</label>
-
-          <input type="password"
-          id="regPassword"
-          placeholder="At least 6 characters">
-
-        </div>
-
-        <div class="form-group">
-
-          <label>Confirm Password</label>
-
-          <input type="password"
-          id="regPasswordConfirm"
-          placeholder="Repeat password">
-
-        </div>
-
-        <button class="auth-submit-btn"
-        onclick="doRegister()">
-
-          Create Account
-
-        </button>
-
-        <div class="auth-msg"
-        id="registerMsg"></div>
-
-      </div>
-
-    </div>
-
-  </div>
+</span>
 
 </div>
+
+<!-- ACCOUNT -->
+
+<div class="account-wrapper"
+id="accountWrapper">
+
+<button class="account-btn"
+onclick="handleAccountClick(event)">
+
+<span id="accountBtnInner">
+
+<svg class="icon-person"
+viewBox="0 0 24 24"
+xmlns="http://www.w3.org/2000/svg">
+
+<path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+
+</svg>
+
+</span>
+
+</button>
+
+<!-- DROPDOWN -->
+
+<div class="account-dropdown"
+id="accountDropdown">
+
+<div class="dropdown-user">
+
+<div class="user-name"
+id="dropdownName">
+
+Hello!
+
+</div>
+
+<div class="user-email"
+id="dropdownEmail">
+
+</div>
+
+</div>
+
+<div class="dropdown-item"
+onclick="showOrders()">
+
+📋 My Orders
+
+</div>
+
+<div class="dropdown-item logout"
+onclick="logout()">
+
+🚪 Log Out
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</header>
+
+<!-- CATEGORY -->
+
+<div class="category-tabs"
+id="categoryTabs">
+
+</div>
+
+<!-- PRODUCTS -->
+
+<div id="products"></div>
+
+</div>
+
+<!-- AUTH MODAL -->
+
+<div class="auth-overlay"
+id="authOverlay"
+onclick="closeAuthOnOverlay(event)">
+
+<div class="auth-modal">
+
+<div class="auth-modal-header">
+
+<h2>👤 Account</h2>
+
+<span class="auth-close"
+onclick="closeAuth()">
+
+✕
+
+</span>
+
+</div>
+
+<div class="auth-tabs">
+
+<div class="auth-tab active"
+id="tabLogin"
+onclick="switchAuthTab('login')">
+
+Login
+
+</div>
+
+<div class="auth-tab"
+id="tabRegister"
+onclick="switchAuthTab('register')">
+
+Register
+
+</div>
+
+</div>
+
+<div class="auth-body">
+
+<!-- LOGIN -->
+
+<div class="auth-form active"
+id="formLogin">
+
+<div class="form-group">
+
+<label>Email</label>
+
+<input type="email"
+id="loginEmail"
+placeholder="your@email.com">
+
+</div>
+
+<div class="form-group">
+
+<label>Password</label>
+
+<input type="password"
+id="loginPassword"
+placeholder="Enter password">
+
+</div>
+
+<button class="auth-submit-btn"
+onclick="doLogin()">
+
+Login
+
+</button>
+
+<div class="auth-msg"
+id="loginMsg">
+
+</div>
+
+</div>
+
+<!-- REGISTER -->
+
+<div class="auth-form"
+id="formRegister">
+
+<div class="form-group">
+
+<label>Email</label>
+
+<input type="email"
+id="regEmail"
+placeholder="your@email.com">
+
+</div>
+
+<div class="form-group">
+
+<label>Password</label>
+
+<input type="password"
+id="regPassword"
+placeholder="At least 6 characters">
+
+</div>
+
+<div class="form-group">
+
+<label>Confirm Password</label>
+
+<input type="password"
+id="regPasswordConfirm"
+placeholder="Repeat password">
+
+</div>
+
+<button class="auth-submit-btn"
+onclick="doRegister()">
+
+Create Account
+
+</button>
+
+<div class="auth-msg"
+id="registerMsg">
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- CART -->
+
+<div class="cart-sidebar"
+id="cartSidebar">
+
+<div class="cart-header">
+
+<h2>Shopping Cart</h2>
+
+<div class="close-cart"
+onclick="toggleCart()">
+
+✕
+
+</div>
+
+</div>
+
+<div class="cart-items"
+id="cartItems">
+
+</div>
+
+<div class="cart-total"
+id="cartTotal">
+
+Total: NT$ 0
+
+</div>
+
+<button class="checkout-btn"
+onclick="submitOrderNow()">
+
+Checkout
+
+</button>
+
+</div>
+
+<!-- SCRIPTS -->
+
+<script src="script.js"></script>
+
+<script type="module"
+src="firebase.js"></script>
+
+</body>
+
+</html>
