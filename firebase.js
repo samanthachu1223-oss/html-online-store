@@ -1,4 +1,3 @@
-
 // ============================================================
 // FIREBASE IMPORTS
 // ============================================================
@@ -90,7 +89,7 @@ window.currentUser = null;
 window.doRegister = async function(){
 
 const email =
-document.getElementById("regEmail").value;
+document.getElementById("regEmail").value.trim();
 
 const password =
 document.getElementById("regPassword").value;
@@ -103,7 +102,8 @@ document.getElementById("registerMsg");
 
 if(password !== confirm){
 
-msg.textContent = "Passwords do not match";
+msg.textContent =
+"Passwords do not match";
 
 return;
 
@@ -119,11 +119,27 @@ password
 
 );
 
-msg.textContent = "Register successful!";
+msg.textContent =
+"Register successful!";
 
 }catch(error){
 
-msg.textContent = error.message;
+if(error.code === "auth/email-already-in-use"){
+
+msg.textContent =
+"This email is already registered.";
+
+}else if(error.code === "auth/weak-password"){
+
+msg.textContent =
+"Password must be at least 6 characters.";
+
+}else{
+
+msg.textContent =
+"Register failed.";
+
+}
 
 }
 
@@ -137,7 +153,7 @@ msg.textContent = error.message;
 window.doLogin = async function(){
 
 const email =
-document.getElementById("loginEmail").value;
+document.getElementById("loginEmail").value.trim();
 
 const password =
 document.getElementById("loginPassword").value;
@@ -155,11 +171,24 @@ password
 
 );
 
-msg.textContent = "Login successful!";
+msg.textContent =
+"Login successful!";
 
 }catch(error){
 
-msg.textContent = error.message;
+if(
+error.code === "auth/invalid-credential"
+){
+
+msg.textContent =
+"Incorrect email or password.";
+
+}else{
+
+msg.textContent =
+"Login failed.";
+
+}
 
 }
 
@@ -187,15 +216,15 @@ if(user){
 
 window.currentUser = user;
 
-updateAccountUI(user.email);
+window.updateAccountUI(user.email);
 
-closeAuth();
+window.closeAuth();
 
 }else{
 
 window.currentUser = null;
 
-updateAccountUI(null);
+window.updateAccountUI(null);
 
 }
 
@@ -224,13 +253,17 @@ collection(db,"orders"),
 
 {
 
-userEmail: window.currentUser.email,
+userEmail:
+window.currentUser.email,
 
-items: orderData.items,
+items:
+orderData.items,
 
-total: orderData.total,
+total:
+orderData.total,
 
-date: new Date().toLocaleString()
+date:
+new Date().toLocaleString()
 
 }
 
@@ -264,9 +297,13 @@ const q = query(
 collection(db,"orders"),
 
 where(
+
 "userEmail",
+
 "==",
+
 window.currentUser.email
+
 )
 
 );
@@ -282,7 +319,8 @@ return;
 
 }
 
-let text = "🧾 ORDER HISTORY\n\n";
+let text =
+"🧾 ORDER HISTORY\n\n";
 
 let index = 1;
 
@@ -291,10 +329,13 @@ querySnapshot.forEach((doc)=>{
 const order = doc.data();
 
 text +=
-"Order #" + index + "\n";
+"Order #" +
+index +
+"\n";
 
 text +=
-order.date + "\n\n";
+order.date +
+"\n\n";
 
 order.items.forEach((item)=>{
 
