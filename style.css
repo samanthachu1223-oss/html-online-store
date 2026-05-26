@@ -192,7 +192,6 @@ header p{
 
 .auth-overlay{
   position:fixed;
-
   top:0;
   left:0;
 
@@ -214,8 +213,8 @@ header p{
 }
 
 .auth-modal{
-  width:400px;
-  max-width:90vw;
+  width:420px;
+  max-width:95vw;
 
   background:white;
 
@@ -224,34 +223,54 @@ header p{
   overflow:hidden;
 
   position:relative;
-
-  z-index:1000000;
 }
 
-.auth-header{
+.auth-modal-header{
   background:linear-gradient(135deg,#ff9a56 0%,#ff6a00 100%);
   color:white;
-  padding:20px;
-  text-align:center;
-  position:relative;
+
+  padding:25px;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-.auth-header h2{
-  font-size:2em;
-}
-
-.close-auth{
-  position:absolute;
-  top:15px;
-  right:20px;
-
-  font-size:2em;
-
+.auth-close{
+  font-size:1.5em;
   cursor:pointer;
+}
+
+.auth-tabs{
+  display:flex;
+  border-bottom:2px solid #eee;
+}
+
+.auth-tab{
+  flex:1;
+  text-align:center;
+  padding:15px;
+  cursor:pointer;
+  font-weight:bold;
+  color:#999;
+  transition:0.25s;
+}
+
+.auth-tab.active{
+  color:#ff6a00;
+  border-bottom:3px solid #ff6a00;
 }
 
 .auth-body{
   padding:30px;
+}
+
+.auth-form{
+  display:none;
+}
+
+.auth-form.active{
+  display:block;
 }
 
 .form-group{
@@ -262,19 +281,17 @@ header p{
   display:block;
   margin-bottom:8px;
   font-weight:bold;
-  font-size:1.1em;
 }
 
 .form-group input{
   width:100%;
-
   padding:14px;
 
-  border:3px solid #ddd;
+  border:2px solid #ddd;
 
-  border-radius:15px;
+  border-radius:12px;
 
-  font-size:1.1em;
+  font-size:1em;
 
   outline:none;
 }
@@ -283,14 +300,14 @@ header p{
   border-color:#ff6a00;
 }
 
-.auth-btn{
+.auth-submit-btn{
   width:100%;
 
-  padding:15px;
+  padding:14px;
 
   border:none;
 
-  border-radius:15px;
+  border-radius:12px;
 
   background:linear-gradient(
     135deg,
@@ -300,37 +317,22 @@ header p{
 
   color:white;
 
-  font-size:1.2em;
+  font-size:1.1em;
 
   cursor:pointer;
 
-  transition:0.2s;
-
-  position:relative;
-
-  z-index:1000001;
+  transition:0.25s;
 }
 
-.auth-btn:hover{
+.auth-submit-btn:hover{
   opacity:0.9;
 }
 
-.auth-switch{
-  text-align:center;
-  margin-top:20px;
-}
-
-.auth-switch span{
-  color:#ff6a00;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-.auth-message{
-  text-align:center;
+.auth-msg{
   margin-top:15px;
+  text-align:center;
+  font-size:0.95em;
   color:#ff6a00;
-  font-weight:bold;
 }
 
 /* CATEGORY */
@@ -390,9 +392,7 @@ header p{
 
 .product-card{
   background:white;
-
   border-radius:15px;
-
   padding:20px;
 
   box-shadow:0 5px 15px rgba(0,0,0,0.1);
@@ -430,7 +430,6 @@ header p{
 
 .add-to-cart-btn{
   width:100%;
-
   padding:12px;
 
   border:none;
@@ -452,7 +451,6 @@ header p{
 
 .cart-sidebar{
   position:fixed;
-
   top:0;
   right:-400px;
 
@@ -476,7 +474,6 @@ header p{
 
 .cart-header{
   background:linear-gradient(135deg,#ff9a56 0%,#ff6a00 100%);
-
   color:white;
 
   padding:20px;
@@ -498,6 +495,7 @@ header p{
 .cart-item{
   display:flex;
   gap:15px;
+  align-items:center;
 
   margin-bottom:20px;
 
@@ -512,10 +510,47 @@ header p{
   object-fit:contain;
 }
 
+.cart-item button{
+  border:none;
+  background:#ff4757;
+  color:white;
+
+  width:35px;
+  height:35px;
+
+  border-radius:8px;
+
+  cursor:pointer;
+}
+
 .cart-total{
   padding:20px;
   font-size:1.5em;
   font-weight:bold;
+}
+
+.checkout-btn{
+  width:calc(100% - 40px);
+
+  margin:0 20px 20px;
+
+  padding:15px;
+
+  border:none;
+
+  border-radius:12px;
+
+  background:linear-gradient(
+    135deg,
+    #ff9a56 0%,
+    #ff6a00 100%
+  );
+
+  color:white;
+
+  font-size:1.1em;
+
+  cursor:pointer;
 }
 
 .empty-cart{
