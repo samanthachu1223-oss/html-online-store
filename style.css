@@ -176,12 +176,23 @@ header p{
 
 .dropdown-item{
   padding:15px;
+
   cursor:pointer;
+
   transition:0.2s;
+
+  color:#ff6a00;
+
+  font-weight:bold;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
 .dropdown-item:hover{
   background:#fff5ef;
+  color:#ff6a00;
 }
 
 .logout{
