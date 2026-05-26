@@ -5,75 +5,75 @@
 var products = [
 
 {
-id: 1,
-name: "Twix Minis",
-description: "Delicious chocolate caramel biscuit",
-price: 10,
-img: "https://gcs.rimg.com.tw/g1/6/bc/37/22228757099575_395.jpg",
-category: "snacks"
+id:1,
+name:"Twix Minis",
+description:"Delicious chocolate caramel biscuit",
+price:10,
+img:"https://gcs.rimg.com.tw/g1/6/bc/37/22228757099575_395.jpg",
+category:"snacks"
 },
 
 {
-id: 2,
-name: "Want Want Senbei",
-description: "Classic rice crackers",
-price: 10,
-img: "https://www.91zjdl.com/file/upload/202503/18/110711811.jpg.middle.jpg",
-category: "snacks"
+id:2,
+name:"Want Want Senbei",
+description:"Classic rice crackers",
+price:10,
+img:"https://www.91zjdl.com/file/upload/202503/18/110711811.jpg.middle.jpg",
+category:"snacks"
 },
 
 {
-id: 3,
-name: "North Sea Codfish Snack",
-description: "Shredded codfish snack",
-price: 60,
-img: "https://img.pchome.com.tw/cs/items/DBACHS1900GP05V/000001_1742180781.jpg",
-category: "snacks"
+id:3,
+name:"North Sea Codfish Snack",
+description:"Shredded codfish snack",
+price:60,
+img:"https://img.pchome.com.tw/cs/items/DBACHS1900GP05V/000001_1742180781.jpg",
+category:"snacks"
 },
 
 {
-id: 4,
-name: "Garlic Green Peas",
-description: "Crunchy garlic flavoured peas",
-price: 15,
-img: "https://www.costco.com.tw/medias/sys_master/images/ha0/h0c/65765251907614.jpg",
-category: "snacks"
+id:4,
+name:"Garlic Green Peas",
+description:"Crunchy garlic flavoured peas",
+price:15,
+img:"https://www.costco.com.tw/medias/sys_master/images/ha0/h0c/65765251907614.jpg",
+category:"snacks"
 },
 
 {
-id: 5,
-name: "Wet Wipes",
-description: "Pure water baby wipes",
-price: 35,
-img: "https://i1.momoshop.com.tw/1692891638/goodsimg/0008/084/433/8084433_OR_m.webp",
-category: "daily"
+id:5,
+name:"Wet Wipes",
+description:"Pure water baby wipes",
+price:35,
+img:"https://i1.momoshop.com.tw/1692891638/goodsimg/0008/084/433/8084433_OR_m.webp",
+category:"daily"
 },
 
 {
-id: 6,
-name: "Alcohol Wipes",
-description: "Disinfecting alcohol wipes",
-price: 60,
-img: "https://www.wellcare.com.tw/upload/2023_07_1714/20230717170747cuwc96Pw71.jpg",
-category: "daily"
+id:6,
+name:"Alcohol Wipes",
+description:"Disinfecting alcohol wipes",
+price:60,
+img:"https://www.wellcare.com.tw/upload/2023_07_1714/20230717170747cuwc96Pw71.jpg",
+category:"daily"
 },
 
 {
-id: 7,
-name: "Band-Aid (Waterproof)",
-description: "Skin color waterproof band-aid",
-price: 15,
-img: "https://cosmebear.tw/cdn/shop/products/band-aid-ok-386265.jpg?v=1687585186&width=360",
-category: "daily"
+id:7,
+name:"Band-Aid (Waterproof)",
+description:"Skin color waterproof band-aid",
+price:15,
+img:"https://cosmebear.tw/cdn/shop/products/band-aid-ok-386265.jpg?v=1687585186&width=360",
+category:"daily"
 },
 
 {
-id: 8,
-name: "Pocket Tissues",
-description: "Minions pattern tissues",
-price: 10,
-img: "https://mall.iopenmall.tw/website/uploads_product/website_43989/P4398906638788_4_77141426.jpg?hash=96815",
-category: "daily"
+id:8,
+name:"Pocket Tissues",
+description:"Minions pattern tissues",
+price:10,
+img:"https://mall.iopenmall.tw/website/uploads_product/website_43989/P4398906638788_4_77141426.jpg?hash=96815",
+category:"daily"
 }
 
 ];
@@ -84,9 +84,9 @@ category: "daily"
 
 var categories = {
 
-snacks: "🍿 Snacks",
+snacks:"🍿 Snacks",
 
-daily: "🏠 Daily Essentials"
+daily:"🏠 Daily Essentials"
 
 };
 
@@ -99,7 +99,7 @@ var cart = [];
 var currentCategory = "snacks";
 
 // ============================================================
-// ACCOUNT UI
+// ACCOUNT
 // ============================================================
 
 function handleAccountClick(event){
@@ -153,7 +153,7 @@ document
 
 }
 
-function closeAuth(){
+window.closeAuth = function(){
 
 document
 .getElementById("authOverlay")
@@ -198,7 +198,7 @@ document
 // UPDATE ACCOUNT UI
 // ============================================================
 
-function updateAccountUI(email){
+window.updateAccountUI = function(email){
 
 var inner =
 document.getElementById("accountBtnInner");
@@ -296,9 +296,7 @@ var html =
 "<div class='category-section'>" +
 
 "<h2 class='category-title'>" +
-
 categories[cat] +
-
 "</h2>" +
 
 "<div class='category-products'>";
@@ -375,19 +373,31 @@ item.quantity++;
 
 cart.push({
 
-id: product.id,
+id:product.id,
 
-name: product.name,
+name:product.name,
 
-price: product.price,
+price:product.price,
 
-img: product.img,
+img:product.img,
 
-quantity: 1
+quantity:1
 
 });
 
 }
+
+updateCart();
+
+}
+
+function removeFromCart(id){
+
+cart = cart.filter(function(item){
+
+return item.id !== id;
+
+});
 
 updateCart();
 
@@ -420,19 +430,29 @@ html +=
 
 "<div class='cart-item'>" +
 
-"<div class='cart-item-info'>" +
-
 "<img src='" + item.img + "'>" +
 
-"<div>" +
+"<div style='flex:1'>" +
 
-"<strong>" + item.name + "</strong>" +
+"<strong>" +
+item.name +
+"</strong>" +
 
-"<div>NT$ " + item.price + "</div>" +
+"<div>NT$ " +
+item.price +
+"</div>" +
 
-"<div>Qty: " + item.quantity + "</div>" +
+"<div>Qty: " +
+item.quantity +
+"</div>" +
 
-"</div></div></div>";
+"</div>" +
+
+"<button onclick='removeFromCart(" +
+item.id +
+")' style='height:35px'>✕</button>" +
+
+"</div>";
 
 }
 
@@ -452,6 +472,10 @@ document
 .textContent = count;
 
 }
+
+// ============================================================
+// CART SIDEBAR
+// ============================================================
 
 function toggleCart(){
 
@@ -503,17 +527,17 @@ item.quantity +
 
 }
 
-// Firebase 儲存
+// FIREBASE
 
 saveOrderToFirebase({
 
-items: JSON.parse(JSON.stringify(cart)),
+items:JSON.parse(JSON.stringify(cart)),
 
-total: total
+total:total
 
 });
 
-// FormSubmit
+// FORMSUBMIT
 
 var form =
 document.createElement("form");
@@ -527,13 +551,16 @@ form.style.display = "none";
 
 var fields = {
 
-"_subject": "New Order",
+"_subject":"New Order",
 
-"Customer": window.currentUser.email,
+"Customer":
+window.currentUser.email,
 
-"Order": orderText,
+"Order":
+orderText,
 
-"Total": "NT$ " + total
+"Total":
+"NT$ " + total
 
 };
 
