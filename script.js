@@ -600,3 +600,11 @@ toggleCart();
 // ============================================================
 
 init();
+
+function closeOrders(){
+
+document
+.getElementById("ordersOverlay")
+.classList.remove("active");
+
+}
