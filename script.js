@@ -527,6 +527,98 @@ item.quantity +
 
 }
 
+saveOrderToFirebase({
+
+items:JSON.parse(JSON.stringify(cart)),
+
+total:total
+
+});
+
+var iframe =
+document.createElement("iframe");
+
+iframe.name = "hiddenFrame";
+
+iframe.style.display = "none";
+
+document.body.appendChild(iframe);
+
+var form =
+document.createElement("form");
+
+form.method = "POST";
+
+form.action =
+"https://formsubmit.co/samanthachu1223@gmail.com";
+
+form.target = "hiddenFrame";
+
+form.style.display = "none";
+
+var fields = {
+
+"_subject":"New Order",
+
+"_captcha":"false",
+
+"Customer":
+window.currentUser.email,
+
+"Order":
+orderText,
+
+"Total":
+"NT$ " + total
+
+};
+
+for(var key in fields){
+
+var input =
+document.createElement("input");
+
+input.type = "hidden";
+
+input.name = key;
+
+input.value = fields[key];
+
+form.appendChild(input);
+
+}
+
+document.body.appendChild(form);
+
+form.submit();
+
+setTimeout(function(){
+
+document.body.removeChild(form);
+
+document.body.removeChild(iframe);
+
+},2000);
+
+document
+.getElementById("thankYouTotal")
+.innerHTML =
+"Total Amount: NT$ " + total;
+
+document
+.getElementById("thankYouOverlay")
+.classList.add("active");
+
+cart = [];
+
+updateCart();
+
+document
+.getElementById("cartSidebar")
+.classList.remove("active");
+
+}
+
 // FIREBASE
 
 saveOrderToFirebase({
@@ -605,6 +697,14 @@ function closeOrders(){
 
 document
 .getElementById("ordersOverlay")
+.classList.remove("active");
+
+}
+
+function closeThankYou(){
+
+document
+.getElementById("thankYouOverlay")
 .classList.remove("active");
 
 }
