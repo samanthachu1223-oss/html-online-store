@@ -686,3 +686,15 @@ header p{
 
   font-size:1.1em;
 }
+
+#thankYouOverlay .orders-modal{
+
+max-width:450px;
+
+}
+
+#thankYouOverlay .orders-body{
+
+text-align:center;
+
+}
